@@ -1,4 +1,4 @@
-# Contacts Management API - README
+# PhotoShare API - README
 
 ## Project Overview
 This mini-project is a REST API built using FastAPI, designed for managing contacts and their information. The project uses SQLAlchemy as the ORM (Object Relational Mapper) to handle the database interactions, and PostgreSQL as the database. The API allows users to perform CRUD operations (Create, Read, Update, Delete) and includes additional features for searching and filtering contacts based on different attributes.
