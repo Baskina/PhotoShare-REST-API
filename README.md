@@ -78,6 +78,17 @@ EMAIL_PASSWORD=<your_email_password>
 
 ### Run database migrations with Alembic:
 ```bash
+alembic init -t async migrations
+
+# change the file migrations/env.py:
+	from src.conf.config import Config as app_config
+	from src.entity.models import Base
+...
+    app_config.target_metadata = Base.metadata
+    config.set_main_option("sqlalchemy.url", app_config.DB_URL)
+    
+```bash
+alembic revision --autogenerate -m 'Init'
 alembic upgrade head
 ```
 
@@ -91,7 +102,7 @@ To use Docker Compose to set up the application and database:
 1. Make sure you have Docker and Docker Compose installed.
 2. In the project root directory, use the following command to start all services:
    ```bash
-   docker-compose up
+   docker-compose up -d
    ```
 3. This will automatically build and start the API and database services.
 
