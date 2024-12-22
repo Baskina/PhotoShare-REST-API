@@ -78,10 +78,10 @@ EMAIL_PASSWORD=<your_email_password>
 
 ### Run database migrations with Alembic:
 ```bash
-alembic init -t async migrations
+alembic init -t async migration
 
-# change the file migrations/env.py:
-	from src.conf.config import Config as app_config
+# change the file migration/env.py:
+	from src.conf.config import config as app_config
 	from src.entity.models import Base
 ...
     app_config.target_metadata = Base.metadata
