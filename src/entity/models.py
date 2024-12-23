@@ -14,7 +14,7 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String(50))
     email: Mapped[str] = mapped_column(String(150), nullable=False, unique=True)
-    password: Mapped[str] = mapped_column(String(255), nullable=False)
+    hash: Mapped[str] = mapped_column(String(255), nullable=False)
     avatar: Mapped[str] = mapped_column(String(255), nullable=True)
     refresh_token: Mapped[str] = mapped_column(String(255), nullable=True)
     created_at: Mapped[date] = mapped_column('created_at', DateTime, default=func.now())
@@ -38,18 +38,18 @@ class Photo(Base):
     description: Mapped[Optional[str]] = mapped_column(String(250))
     rating: Mapped[int] = mapped_column(Integer, nullable=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'), nullable=False)
-    user: Mapped["User"] = relationship("User", backref="contact", lazy="joined")
+    user: Mapped["User"] = relationship("User", backref="photo", lazy="joined")
     created_at: Mapped[date] = mapped_column('created_at', DateTime, default=func.now(), nullable=True)
     updated_at: Mapped[date] = mapped_column('updated_at', DateTime, default=func.now(),
                                              onupdate=func.now(), nullable=True)
-    photo_tags = relationship("Tag", secondary=photo_tag_association, back_populates="photo")
+    photo_tags = relationship("Tag", secondary=photo_tag_association, back_populates="photo_photos")
 
 
 class Tag(Base):
     __tablename__ = 'tag'
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
-    photo_photos = relationship("Photo", secondary=photo_tag_association, back_populates="tag")
+    photo_photos = relationship("Photo", secondary=photo_tag_association, back_populates="photo_tags")
 
 
 class Comment(Base):

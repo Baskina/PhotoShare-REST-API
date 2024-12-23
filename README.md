@@ -77,6 +77,8 @@ EMAIL_PASSWORD=<your_email_password>
 ```
 
 ### Run database migrations with Alembic:
+run Postgres in docker
+use db sql client (ex. DBeaver)
 ```bash
 alembic init -t async migration
 
@@ -93,6 +95,8 @@ alembic upgrade head
 ```
 
 ### Start the FastAPI server:
+
+run Redis in docker
 ```bash
 uvicorn main:app --reload
 ```
