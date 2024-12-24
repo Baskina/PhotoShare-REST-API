@@ -86,7 +86,7 @@ alembic init -t async migration
 	from src.conf.config import config as app_config
 	from src.entity.models import Base
 ...
-    app_config.target_metadata = Base.metadata
+    target_metadata = Base.metadata
     config.set_main_option("sqlalchemy.url", app_config.DB_URL)
     
 ```bash
