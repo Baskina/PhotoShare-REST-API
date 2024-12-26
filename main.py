@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.routes import contacts, users, auth
+from src.routes import users, auth
 from src.database.db import get_db
 from src.services.middlewares import ProcessTimeHeaderMiddleware
 from src.conf.config import config
@@ -27,7 +27,6 @@ app.add_middleware(
 
 
 app.include_router(auth.router, prefix='/api')
-app.include_router(contacts.routerContacts, prefix='/api')
 app.include_router(users.routerUsers, prefix='/api')
 
 
