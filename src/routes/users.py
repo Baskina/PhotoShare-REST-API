@@ -24,9 +24,9 @@ from src.repository import (
 routerUsers = APIRouter(prefix="/users", tags=["users"])
 
 cloudinary.config(
-    cloud_name=config.CLD_NAME,
-    api_key=config.CLD_API_KEY,
-    api_secret=config.CLD_API_SECRET,
+    cloud_name=config.CLOUDINARY_CLOUD_NAME,
+    api_key=config.CLOUDINARY_API_KEY,
+    api_secret=config.CLOUDINARY_API_SECRET,
     secure=True,
 )
 

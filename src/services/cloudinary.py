@@ -5,7 +5,7 @@ from cloudinary.utils import cloudinary_url
 import hmac
 import os
 from fastapi import HTTPException, UploadFile
-from src.conf.config import settings
+from src.conf.config import config
 import logging
 import cloudinary.uploader
 import cloudinary.api
@@ -14,9 +14,9 @@ import cloudinary.api
 logger = logging.getLogger(__name__)
 
 cloudinary.config(
-    cloud_name=settings.CLOUDINARY_CLOUD_NAME,
-    api_key=settings.CLOUDINARY_API_KEY,
-    api_secret=settings.CLOUDINARY_API_SECRET,
+    cloud_name=config.CLOUDINARY_CLOUD_NAME,
+    api_key=config.CLOUDINARY_API_KEY,
+    api_secret=config.CLOUDINARY_API_SECRET,
 )
 async def upload_image_to_cloudinary(file: UploadFile):
     try:
@@ -28,7 +28,7 @@ async def upload_image_to_cloudinary(file: UploadFile):
 
         params_to_sign = f"timestamp={timestamp}"
         signature = hmac.new(
-            bytes(settings.CLOUDINARY_API_SECRET, 'utf-8'),
+            bytes(config.CLOUDINARY_API_SECRET, 'utf-8'),
             msg=bytes(params_to_sign, 'utf-8'),
             digestmod=hashlib.sha1
         ).hexdigest()
@@ -39,7 +39,7 @@ async def upload_image_to_cloudinary(file: UploadFile):
         response = cloudinary.uploader.upload(
             file_content,
             resource_type="image",
-            api_key=settings.CLOUDINARY_API_KEY,
+            api_key=config.CLOUDINARY_API_KEY,
             timestamp=timestamp,
             signature=signature
         )

@@ -3,7 +3,6 @@ from typing import Any
 from pydantic import ConfigDict, field_validator, EmailStr
 from pydantic_settings import BaseSettings
 
-
 class Settings(BaseSettings):
     DB_URL: str = "postgresql+asyncpg://postgres:567234@localhost:5432/fast_db"
     SECRET_KEY_JWT: str = "1234567890"
@@ -11,9 +10,9 @@ class Settings(BaseSettings):
     REDIS_DOMAIN: str = "localhost"
     REDIS_PORT: int = 6379
     REDIS_PASSWORD: str | None = None
-    CLD_NAME: str = "ddkhc0hci"
-    CLD_API_KEY: int = 337619357218213
-    CLD_API_SECRET: str = "secret"
+    CLOUDINARY_CLOUD_NAME: str = "ddkhc0hci"
+    CLOUDINARY_API_KEY: int = 337619357218213
+    CLOUDINARY_API_SECRET: str = "secret"
 
     MAIL_USERNAME: str = "email@gmail.com"
     MAIL_PASSWORD: str = "passw888"
@@ -23,7 +22,7 @@ class Settings(BaseSettings):
 
     model_config = ConfigDict(
         extra="ignore", env_file=".env", env_file_encoding="utf-8"
-    )  # noqa
+    )
 
     @field_validator("ALGORITHM")
     @classmethod

@@ -9,7 +9,8 @@ from src.routes import users, auth
 from src.database.db import get_db
 from src.services.middlewares import ProcessTimeHeaderMiddleware
 from src.conf.config import config
-
+from src.routes.photo import router
+from src.routes.tag import router_tag
 app = FastAPI()
 
 origins = [
@@ -28,7 +29,8 @@ app.add_middleware(
 
 app.include_router(auth.router, prefix='/api')
 app.include_router(users.routerUsers, prefix='/api')
-
+app.include_router(router)
+app.include_router(router_tag)
 
 @app.on_event("startup")
 async def startup():
