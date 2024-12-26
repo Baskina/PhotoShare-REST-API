@@ -1,6 +1,7 @@
 .env
 .idea
 /postgres-data
+/migrations
 /migration
 /venv
 **/__pycache__/

@@ -1,8 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
+<<<<<<< HEAD
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="jdk" jdkName="Python 3.12" jdkType="Python SDK" />
+=======
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/.idea/dataSources" />
+      <excludeFolder url="file://$MODULE_DIR$/migration" />
+      <excludeFolder url="file://$MODULE_DIR$/postgres-data/pg_commit_ts" />
+      <excludeFolder url="file://$MODULE_DIR$/postgres-data/pg_dynshmem" />
+      <excludeFolder url="file://$MODULE_DIR$/postgres-data/pg_logical/mappings" />
+      <excludeFolder url="file://$MODULE_DIR$/postgres-data/pg_logical/snapshots" />
+      <excludeFolder url="file://$MODULE_DIR$/postgres-data/pg_notify" />
+      <excludeFolder url="file://$MODULE_DIR$/postgres-data/pg_replslot" />
+      <excludeFolder url="file://$MODULE_DIR$/postgres-data/pg_serial" />
+      <excludeFolder url="file://$MODULE_DIR$/postgres-data/pg_snapshots" />
+      <excludeFolder url="file://$MODULE_DIR$/postgres-data/pg_stat" />
+      <excludeFolder url="file://$MODULE_DIR$/postgres-data/pg_stat_tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/postgres-data/pg_tblspc" />
+      <excludeFolder url="file://$MODULE_DIR$/postgres-data/pg_twophase" />
+      <excludeFolder url="file://$MODULE_DIR$/postgres-data/pg_wal/archive_status" />
+      <excludeFolder url="file://$MODULE_DIR$/postgres-data/pg_wal/summaries" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+>>>>>>> photo-5-7-new
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
