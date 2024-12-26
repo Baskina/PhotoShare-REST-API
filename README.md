@@ -64,17 +64,8 @@ pip install -r requirements.txt
 ```
 
 ### Configure environment variables:
-1. All sensitive information should be stored in a `.env` file in the root directory. Variables include database URL, JWT secrets, Cloudinary credentials, and email server configuration.
-2. Example `.env` file:
-```plaintext
-DATABASE_URL=postgresql://postgres:<password>@localhost:5432/contacts_db
-JWT_SECRET_KEY=<your_secret_key>
-CLOUDINARY_URL=<your_cloudinary_url>
-EMAIL_HOST=<your_email_host>
-EMAIL_PORT=<your_email_port>
-EMAIL_USER=<your_email_user>
-EMAIL_PASSWORD=<your_email_password>
-```
+1. All sensitive information should be stored in a `.env` file. To create file use .env.example as a example
+
 
 ### Run database migrations with Alembic:
 run Postgres in docker
