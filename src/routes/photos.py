@@ -167,7 +167,7 @@ async def read_photo(
     photo = await repositories_photos.read_photo(photo_id, db)
     if not photo:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found")
-    if photo.user_id == current_user.id or current_user.role == "admin":
-        return photo
-    else:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You don't have permission")
+    # if photo.user_id == current_user.id or current_user.role == "admin":
+    return photo
+    # else:
+    #     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You don't have permission")
