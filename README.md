@@ -106,27 +106,27 @@ After starting the server, navigate to `http://127.0.0.1:8000/docs` to explore t
 
 ## API Endpoints
 
-### Contact Management
+### Photo management
 
-- **Create a new contact**
-  - `POST /api/contacts/`
-  - Create a new contact with the provided details.
+- **Create a new photo**
+- `POST /api/photos/`
+- Create a new photo with a description
+- available to all users
 
-- **Get all contacts**
-  - `GET /api/contacts/`
-  - Retrieve a list of all contacts.
+- **Delete photo by ID**
+- `DELETE /api/photos/{photo_id}`
+- Delete photo from the database and from Cloud
+- Available only to photo owners and administrators
 
-- **Get a contact by ID**
-  - `GET /api/contacts/{contact_id}`
-  - Retrieve a specific contact by its ID.
+- **Update photo description by ID**
+- `PUT /api/photos/{photo_id}`
+- Update description of an existing photo
+- - Available only to photo owners and administrators
 
-- **Update a contact by ID**
-  - `PUT /api/contacts/{contact_id}`
-  - Update the details of an existing contact.
-
-- **Delete a contact by ID**
-  - `DELETE /api/contacts/{contact_id}`
-  - Remove a contact from the database.
+- **Get a photo by ID**
+- `GET /api/photos/{photo_id}`
+- Get a specific photo by its ID
+- Available only to photo owners and administrators
 
 ### Authentication Endpoints
 
