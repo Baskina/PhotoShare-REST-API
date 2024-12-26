@@ -6,7 +6,7 @@ from src.entity.models import Tag
 from src.schemas.tags import TagResponse
 from typing import List
 
-router_tag = APIRouter(prefix="/tag", tags=["tag"])
+router_tag = APIRouter(prefix="/tags", tags=["tags"])
 
 @router_tag.get("/tags", response_model=List[TagResponse])
 async def get_tags(session: AsyncSession = Depends(get_db)):
