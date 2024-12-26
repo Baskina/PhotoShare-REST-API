@@ -18,6 +18,6 @@ class CommentResponse(BaseModel):
     class Config:
         orm_mode = True
 
-# Схема для оновлення коментаря
+
 class CommentUpdate(BaseModel):
     text: str
