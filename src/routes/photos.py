@@ -207,3 +207,5 @@ async def read_photos(
     else:
         id_user = 0
     return await repositories_photos.read_all_photos(limit=limit, offset=offset, db=db, user_id=id_user)
+
+
