@@ -4,16 +4,17 @@ from urllib.parse import urlparse, unquote
 import cloudinary
 import cloudinary.uploader
 
-from fastapi import APIRouter, Depends, status, Path, HTTPException, UploadFile, File
+from fastapi import APIRouter, Depends, status, Path, HTTPException, UploadFile, File, Query
 from fastapi_limiter.depends import RateLimiter
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.entity.models import User, Photo
-from src.schemas.photos import PhotosSchemaResponse
+from src.schemas.photos import PhotosSchemaResponse, PhotoValidationSchema
 from src.database.db import get_db
 
 from src.repository import photos as repositories_photos
 from src.services.auth import auth_service
+from src.conf.config import config
 
 routerPhotos = APIRouter(prefix="/photos", tags=["photos"])
 
@@ -45,7 +46,7 @@ async def add_photo(
     Returns:
         PhotosSchemaResponse: The newly created photo.
     """
-    public_id = f"Digital workspace/{current_user.email}/{uuid.uuid4().hex}"
+    public_id = f"{config.CLD_FOLDER}/{current_user.email}/{uuid.uuid4().hex}"
     res = cloudinary.uploader.upload(file.file, public_id=public_id, overwrite=False)
     res_url = cloudinary.CloudinaryImage(public_id).build_url(
         width=1000, height=1000, crop="fill", version=res.get("version")
@@ -171,3 +172,38 @@ async def read_photo(
     return photo
     # else:
     #     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You don't have permission")
+
+
+@routerPhotos.get(
+    "/",
+    response_model=list[PhotoValidationSchema],
+    summary="Retrieve all photos",
+    description="Gets all photos from the database",
+    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
+)
+async def read_photos(
+        limit: int = Query(default=10, ge=0, le=50, description="The maximum number of photos to return"),
+        offset: int = Query(default=0, ge=0, description="The offset from which to start returning photos"),
+        all_photos: bool = Query(default=False,
+                                 description="Flag to get all photos from the database; default (False) is only photos of the current user"),
+        db: AsyncSession = Depends(get_db),
+        current_user: User = Depends(auth_service.get_current_user),
+):
+    """
+    Gets all photos from the database.
+
+    Args:
+        limit (int): The maximum number of photos to return. Defaults to 10.
+        offset (int): The offset from which to start returning photos. Defaults to 0.
+        all_photos (bool): A flag to get all photos from the database. Defaults to False - only photos of the current user.
+        db (AsyncSession): The database session.
+        current_user (User): The currently authenticated user, obtained through authentication services.
+
+    Returns:
+        list[PhotosSchemaResponse]: A list of photos that match the provided filters.
+    """
+    if not all_photos:
+        id_user = current_user.id
+    else:
+        id_user = 0
+    return await repositories_photos.read_all_photos(limit=limit, offset=offset, db=db, user_id=id_user)
