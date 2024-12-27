@@ -121,12 +121,17 @@ After starting the server, navigate to `http://127.0.0.1:8000/docs` to explore t
 - **Update photo description by ID**
 - `PUT /api/photos/{photo_id}`
 - Update description of an existing photo
-- - Available only to photo owners and administrators
+- Available only to photo owners and administrators
 
 - **Get a photo by ID**
 - `GET /api/photos/{photo_id}`
 - Get a specific photo by its ID
-- Available only to photo owners and administrators
+- Available to all users
+
+- **Get all photos**
+- `GET /api/photos/`
+- Get a list of all photos (your own or all)
+- Available to all users
 
 ### Authentication Endpoints
 

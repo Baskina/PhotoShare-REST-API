@@ -84,3 +84,11 @@ async def read_photo(photo_id: int, db: AsyncSession) -> Photo | None:
     # stmt = stmt.filter_by(user_id=user_id)
     photo = await db.execute(stmt)
     return photo.scalar_one_or_none()
+
+
+async def read_all_photos(limit: int, offset: int, db: AsyncSession, user_id: int):
+    stmt = select(Photo).offset(offset).limit(limit)
+    if user_id != 0:
+        stmt = stmt.filter_by(user_id=user_id)
+    contacts = await db.execute(stmt)
+    return contacts.scalars().all()
