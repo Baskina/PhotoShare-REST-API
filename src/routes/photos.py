@@ -1,60 +1,103 @@
 import uuid
 from urllib.parse import urlparse, unquote
-
+from typing import List
 import cloudinary
 import cloudinary.uploader
 
-from fastapi import APIRouter, Depends, status, Path, HTTPException, UploadFile, File, Query
+from fastapi import APIRouter, Depends, status, Path, HTTPException, UploadFile, File, Query,Form
 from fastapi_limiter.depends import RateLimiter
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.entity.models import User, Photo
-from src.schemas.photos import PhotosSchemaResponse, PhotoValidationSchema
-from src.database.db import get_db
+
+from src.entity.models import User, Photo,Tag
+from src.schemas.photos import PhotosSchemaResponse, PhotoValidationSchema,PhotoResponse,PhotoCreate
 
 from src.repository import photos as repositories_photos
+
+import logging
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from src.services.auth import auth_service
-from src.conf.config import config
+from src.database.db import get_db
+from src.services.cloudinary import upload_image_to_cloudinary,generate_transformed_image_url
+
+
 
 routerPhotos = APIRouter(prefix="/photos", tags=["photos"])
 
-
-@routerPhotos.post(
-    "/",
-    response_model=PhotosSchemaResponse,
-    status_code=status.HTTP_201_CREATED,
-    summary="Add a new photo with its description",
-    description="Adds a new photo to the database",
-    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
-async def add_photo(
-        discription: str,
-        file: UploadFile = File(description="The image file to be uploaded"),
-        db: AsyncSession = Depends(get_db),
-        current_user: User = Depends(auth_service.get_current_user),
-) -> Photo:
-    """
-    Adds a new photo to the database.
+logger = logging.getLogger(__name__)
 
-    Args:
-        discription (str): The description of the photo.
-        file (UploadFile, optional): The image file to be uploaded. Defaults to File.
-        db (AsyncSession, optional): The database session. Defaults to Depends(get_db).
-        current_user (User, optional): The currently authenticated user, obtained through authentication services.
-        Defaults to Depends(auth_service.get_current_user).
 
-    Returns:
-        PhotosSchemaResponse: The newly created photo.
+
+@routerPhotos.post("/", response_model=PhotoResponse)
+async def create_photo(
+        description: str = Form(...),
+        tags: List[str] = Form(...),
+        file: UploadFile = File(...),
+        session: AsyncSession = Depends(get_db),
+        user=Depends(auth_service.get_current_user),
+):
     """
-    public_id = f"{config.CLD_FOLDER}/{current_user.email}/{uuid.uuid4().hex}"
-    res = cloudinary.uploader.upload(file.file, public_id=public_id, overwrite=False)
-    res_url = cloudinary.CloudinaryImage(public_id).build_url(
-        width=1000, height=1000, crop="fill", version=res.get("version")
+       Creates a new photo and uploads it to Cloudinary. The photo is then associated with tags and saved in the database.
+
+       Args:
+           description (str): A description of the photo.
+           tags (List[str]): A list of tags to associate with the photo. Maximum of 5 tags are allowed.
+           file (UploadFile): The file to upload as the photo.
+           session (AsyncSession): The database session used to interact with the database.
+           user (User): The currently authenticated user making the request.
+
+       Raises:
+           HTTPException: If more than 5 tags are provided.
+
+       Returns:
+           dict: A dictionary containing the following fields:
+               - id (int): The ID of the newly created photo.
+               - user_id (int): The ID of the user who uploaded the photo.
+               - description (str): The description of the photo.
+               - tags (List[str]): A list of tags associated with the photo.
+               - image (str): The URL of the uploaded image in Cloudinary.
+       """
+    tags = tags[0].split(",") if isinstance(tags, list) else tags.split(",")
+
+    if len(tags) > 5:
+        raise HTTPException(status_code=400, detail="You can add up to 5 tags.")
+
+    tags = list(set(tags))
+
+    image_url, public_id = await upload_image_to_cloudinary(file)
+
+    new_photo = Photo(
+        image=public_id,
+        description=description,
+        user_id=user.id,
     )
-    photo = await repositories_photos.add_photo(
-        res_url, discription, db, current_user.id)
 
-    return photo
+    session.add(new_photo)
+
+    for tag_name in tags:
+        tag_result = await session.execute(select(Tag).where(Tag.name == tag_name))
+        tag = tag_result.scalars().first()
+
+        if not tag:
+            tag = Tag(name=tag_name)
+            session.add(tag)
+
+        new_photo.photo_tags.append(tag)
+
+    await session.commit()
+    await session.refresh(new_photo)
+
+    return {
+        "id": new_photo.id,
+        "user_id": new_photo.user_id,
+        "description": new_photo.description,
+        "tags": tags,
+        "image": image_url
+    }
 
 
 @routerPhotos.delete(
@@ -83,24 +126,34 @@ async def delete_photo(
     res = await repositories_photos.read_photo(photo_id, db)
     if not res:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found")
+
     if current_user.role == "admin" or res.user_id == current_user.id:
         image_to_delete = res.image
         parsed_url = urlparse(image_to_delete)
+
+        print(f"Parsed URL path: {parsed_url.path}")
+
         path_parts = parsed_url.path.split('/')
-        url_image_to_delete = '/'.join(path_parts[6:])
-        decoded_public_id = unquote(url_image_to_delete)
-        result = cloudinary.uploader.destroy(public_id=decoded_public_id,
-                                             invalidate=True)
-        if result["result"] == "ok":
-            await repositories_photos.delete_photo(photo_id, db)
-        elif result["result"] == "not found":
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found in Cloudinary")
+
+
+        if len(path_parts) >= 1:
+            public_id = path_parts[-1].split('.')[0]
         else:
-            raise Exception(result["result"])
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid URL format for public_id")
+
+
+        try:
+            result = cloudinary.uploader.destroy(public_id=public_id, invalidate=True)
+            if result["result"] == "ok":
+                await repositories_photos.delete_photo(photo_id, db)
+            elif result["result"] == "not found":
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found in Cloudinary")
+            else:
+                raise Exception(f"Error deleting photo from Cloudinary: {result['result']}")
+        except cloudinary.exceptions.Error as e:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Cloudinary error: {str(e)}")
     else:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You don't have permission")
-
-
 @routerPhotos.put(
     "/{photo_id}",
     response_model=PhotosSchemaResponse,
@@ -110,7 +163,7 @@ async def delete_photo(
 )
 async def update_photo(
         photo_id: int,
-        discription: str,
+        description: str,
         db: AsyncSession = Depends(get_db),
         current_user: User = Depends(auth_service.get_current_user),
 ):
@@ -119,7 +172,7 @@ async def update_photo(
 
     Args:
         photo_id (int): The ID of the photo to update.
-        discription (str): The new description of the photo.
+        description (str): The new description of the photo.
         db (AsyncSession): The database session.
         current_user (User): The currently authenticated user, obtained through authentication services.
 
@@ -133,7 +186,7 @@ async def update_photo(
     if not res:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found")
     if current_user.role == "admin" or res.user_id == current_user.id:
-        update_photo = await repositories_photos.update_photo(photo_id, discription, db)
+        update_photo = await repositories_photos.update_photo(photo_id, description, db)
         return update_photo
     else:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You don't have permission")
@@ -168,10 +221,7 @@ async def read_photo(
     photo = await repositories_photos.read_photo(photo_id, db)
     if not photo:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found")
-    # if photo.user_id == current_user.id or current_user.role == "admin":
     return photo
-    # else:
-    #     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You don't have permission")
 
 
 @routerPhotos.get(
@@ -206,4 +256,75 @@ async def read_photos(
         id_user = current_user.id
     else:
         id_user = 0
-    return await repositories_photos.read_all_photos(limit=limit, offset=offset, db=db, user_id=id_user)
+
+    photos = await repositories_photos.read_all_photos(limit=limit, offset=offset, db=db, user_id=id_user)
+
+
+    for photo in photos:
+        if not photo.description:
+            photo.description = "No description provided"
+
+    return photos
+
+@routerPhotos.get("/{photo_id}/transform")
+async def transform_photo(
+        photo_id: int,
+        width: int = 300,
+        height: int = 300,
+        crop: str = "fill",
+        angle: int = 0,
+        effect: str = None,
+        quality: int = None,
+        format: str = None,
+        user=Depends(auth_service.get_current_user),
+        session: AsyncSession = Depends(get_db),
+):
+    """
+        Transforms a photo by applying various modifications such as resizing, cropping, rotating, and adding effects.
+
+        Args:
+            photo_id (int): The ID of the photo to transform.
+            width (int): The width of the transformed image (default is 300).
+            height (int): The height of the transformed image (default is 300).
+            crop (str): The crop mode (default is 'fill'). Other options can include 'scale', 'fit', etc.
+            angle (int): The angle to rotate the image (default is 0).
+            effect (str, optional): The name of the effect to apply (e.g., 'grayscale'). If not provided, no effect is applied.
+            quality (int, optional): The quality of the transformed image (default is None).
+            format (str, optional): The format to convert the image to (e.g., 'jpeg'). If not provided, no conversion is applied.
+            user (User): The currently authenticated user.
+            session (AsyncSession): The database session for querying the photo.
+
+        Raises:
+            HTTPException:
+                - 404: If the photo with the given ID is not found.
+                - 403: If the current user does not have permission to transform the photo.
+
+        Returns:
+            dict: A dictionary containing the transformed image URL.
+                - transformed_url (str): The URL of the transformed image.
+        """
+
+    photo_result = await session.execute(select(Photo).where(Photo.id == photo_id))
+    photo = photo_result.scalars().first()
+
+    if not photo:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found")
+
+    if photo.user_id != user.id and user.role != "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Permission denied")
+
+
+    transformations = {"width": width, "height": height, "crop": crop}
+
+    if angle:
+        transformations["angle"] = angle
+    if effect:
+        transformations["effect"] = effect
+    if quality:
+        transformations["quality"] = quality
+    if format:
+        transformations["format"] = format
+
+
+    transformed_url = generate_transformed_image_url(photo.image.split("/")[-1].split(".")[0], transformations)
+    return {"transformed_url": transformed_url}
