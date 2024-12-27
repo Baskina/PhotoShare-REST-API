@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     CLD_NAME: str = "ddkhc0hci"
     CLD_API_KEY: int = 337619357218213
     CLD_API_SECRET: str = "secret"
+    CLD_FOLDER: str = "Digital workspace"
 
     MAIL_USERNAME: str = "email@gmail.com"
     MAIL_PASSWORD: str = "passw888"
