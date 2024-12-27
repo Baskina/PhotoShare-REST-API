@@ -51,17 +51,6 @@ async def upload_image_to_cloudinary(file: UploadFile):
         logger.error(f"Error uploading image: {str(e)}")
         raise HTTPException(status_code=400, detail=f"Error uploading image: {str(e)}")
 
-def delete_image_from_cloudinary(public_id: str):
-    try:
-
-        response = cloudinary.uploader.destroy(public_id)
-        if response.get("result") != "ok":
-            raise Exception(f"Failed to delete image: {response}")
-        logger.info(f"Image {public_id} deleted successfully.")
-    except Exception as e:
-        logger.error(f"Error deleting image: {str(e)}")
-        raise HTTPException(status_code=400, detail=f"Error deleting image: {str(e)}")
-
 
 def generate_transformed_image_url(public_id: str, transformations: dict):
     try:
