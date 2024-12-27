@@ -3,7 +3,7 @@ from urllib.parse import urlparse, unquote
 from typing import List
 import cloudinary
 import cloudinary.uploader
-from fastapi import Body
+
 from fastapi import APIRouter, Depends, status, Path, HTTPException, UploadFile, File, Query,Form
 from fastapi_limiter.depends import RateLimiter
 
@@ -12,8 +12,7 @@ from src.entity.models import User, Photo,Tag
 from src.schemas.photos import PhotosSchemaResponse, PhotoValidationSchema,PhotoResponse,PhotoCreate
 
 from src.repository import photos as repositories_photos
-from src.services.auth import auth_service
-from src.conf.config import config
+
 import logging
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -222,10 +221,7 @@ async def read_photo(
     photo = await repositories_photos.read_photo(photo_id, db)
     if not photo:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found")
-    # if photo.user_id == current_user.id or current_user.role == "admin":
     return photo
-    # else:
-    #     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You don't have permission")
 
 
 @routerPhotos.get(
@@ -263,10 +259,10 @@ async def read_photos(
 
     photos = await repositories_photos.read_all_photos(limit=limit, offset=offset, db=db, user_id=id_user)
 
-    # Проверка и корректировка значений description
+
     for photo in photos:
         if not photo.description:
-            photo.description = "No description provided"  # Дефолтное описание, если пустое
+            photo.description = "No description provided"
 
     return photos
 
