@@ -23,9 +23,8 @@ async def get_photo_comments(
     photo_id: int, 
     session: AsyncSession = Depends(get_db)
 ):
-    """
-    Отримує список коментарів до світлини.
-    """
+    
+    
     return await get_comments_by_photo(session, photo_id)
 
 @router.put("/{comment_id}", response_model=CommentResponse)
