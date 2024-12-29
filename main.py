@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.routes import users, auth, photos
 from src.routes import users, auth, comments  
 from src.database.db import get_db
 from src.services.middlewares import ProcessTimeHeaderMiddleware
