@@ -4,7 +4,9 @@ from fastapi_limiter import FastAPILimiter
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from fastapi.templating import Jinja2Templates
+from fastapi import Request
+from fastapi.staticfiles import StaticFiles
 from src.routes import users, auth, photos
 from src.database.db import get_db
 from src.services.middlewares import ProcessTimeHeaderMiddleware
@@ -30,6 +32,10 @@ app.include_router(auth.router, prefix='/api')
 app.include_router(users.routerUsers, prefix='/api')
 app.include_router(photos.routerPhotos, prefix='/api')
 
+app.mount("/templates", StaticFiles(directory="src/view/templates"), name="templates")
+app.mount("/css", StaticFiles(directory="src/view/css"), name="css")
+app.mount("/javascript", StaticFiles(directory="src/view/javascript"), name="javascript")
+app.mount("/static", StaticFiles(directory="src/view/static"), name="static")
 
 @app.on_event("startup")
 async def startup():
@@ -68,12 +74,13 @@ async def healthchecker(db: AsyncSession = Depends(get_db)):
         print(e)
         raise HTTPException(status_code=500, detail="Error connecting to the database")
 
+templates = Jinja2Templates(directory="src/view/templates")
 
-@app.get("/")
-async def root():
+@app.get("/", response_class=templates.TemplateResponse)
+async def root(request: Request):
     """
-    Root endpoint of the API, serving as a navigation page.
+    Serves the index.html template as the root endpoint.
 
-    :return: A dictionary containing a message indicating the navigation page.
+    :return: A rendered index.html template with the request context.
     """
-    return {"message": "Navigation page"}
+    return templates.TemplateResponse("index.html", context={"request": request})
