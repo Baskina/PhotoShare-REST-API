@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.routes.tag import router_tag
 from src.routes import users, auth, photos
 from src.database.db import get_db
 from src.services.middlewares import ProcessTimeHeaderMiddleware
@@ -29,7 +30,7 @@ app.add_middleware(
 app.include_router(auth.router, prefix='/api')
 app.include_router(users.routerUsers, prefix='/api')
 app.include_router(photos.routerPhotos, prefix='/api')
-
+app.include_router(router_tag)
 
 @app.on_event("startup")
 async def startup():
