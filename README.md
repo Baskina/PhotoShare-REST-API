@@ -66,7 +66,6 @@ pip install -r requirements.txt
 ### Configure environment variables:
 1. All sensitive information should be stored in a `.env` file. To create file use .env.example as a example
 
-
 ### Run database migrations with Alembic:
 run Postgres in docker
 use db sql client (ex. DBeaver)

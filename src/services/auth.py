@@ -11,7 +11,7 @@ from src.database.db import get_db
 from src.repository import (
     users as repository_users,
 )
-from src.conf.config import config
+from src.conf.config import config, Settings
 
 
 class Auth:
@@ -208,6 +208,32 @@ class Auth:
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail="Invalid token for email verification",
             )
+        
+def create_access_token(data: dict):
+    """
+    Creates a JSON Web Token (JWT) containing user information and expiration time.
 
+    This function generates an access token that is signed using a secret key and includes the following claims:
+    - The user-provided data (e.g., user email or other information).
+    - The expiration time, which is calculated based on the configured token expiration time.
+
+    Args:
+        data (dict): A dictionary containing user-specific information to include in the token payload.
+    
+    Returns:
+        str: A signed JWT (access token) as a string.
+    
+    Example:
+        If the input data is {"sub": "user@example.com"}, the function will return a JWT that contains the 
+        email as a claim along with the expiration time.
+
+    Raises:
+        jwt.PyJWTError: If there is an error encoding the JWT.
+    """
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=Settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, Settings.SECRET_KEY_JWT, algorithm=Settings.ALGORITHM)
+    return encoded_jwt
 
 auth_service = Auth()
