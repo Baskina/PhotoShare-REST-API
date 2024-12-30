@@ -1,0 +1,18 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+
+# Database files
+*.sqlite3
+*.db
+
+# Environment variables
+.env.env
+.idea
+/postgres-data
+/migration
+/venv
+__pycache__/
