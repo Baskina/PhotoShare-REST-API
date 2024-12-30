@@ -1,6 +1,6 @@
-token = localStorage.getItem("accessToken")
+const token = localStorage.getItem("refreshToken")
 
-aboutUser = document.getElementById("about_user")
+const aboutUser = document.getElementById("about_user")
 
 import {baseUrl} from './config.js';
 
@@ -22,7 +22,7 @@ const getInfoUser = async () => {
 
   const respons = await fetch(`${baseUrl}/api/users/${username}`, requestOptions)
     if (respons.status === 200) {
-      result = await respons.json()
+      const result = await respons.json()
       console.log(result);
       aboutUser.innerHTML = ""
       const img = document.createElement('img');

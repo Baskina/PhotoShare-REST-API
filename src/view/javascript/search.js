@@ -1,12 +1,12 @@
 import {baseUrl} from './config.js';
 
 
-token = localStorage.getItem("accessToken")
+const token = localStorage.getItem("accessToken")
 
 const searchParams = new URLSearchParams(window.location.search);
 const searchValue = searchParams.get('search');
 
-searchList = document.getElementById("search_list")
+const searchList = document.getElementById("search_list")
 
 const getUserById = async (user_id) => {
     const myHeaders = new Headers();

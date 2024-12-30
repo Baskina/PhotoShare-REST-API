@@ -53,6 +53,6 @@ form.addEventListener("submit", async(e) => {
         const result = await response.json()
         localStorage.setItem("accessToken", result.access_token);
         localStorage.setItem("refreshToken", result.refresh_token);
-        window.location = '/templates/images.html'
+        window.location = '/templates/index.html'
     }
 })

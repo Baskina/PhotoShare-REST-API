@@ -7,6 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.templating import Jinja2Templates
 from fastapi import Request
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
+
 
 from src.routes.tag import router_tag
 from src.routes import users, auth, photos
@@ -80,7 +82,7 @@ async def healthchecker(db: AsyncSession = Depends(get_db)):
 
 templates = Jinja2Templates(directory="src/view")
 
-@app.get("/", response_class=templates.TemplateResponse)
+@app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
     """
     Serves the index.html template as the root endpoint.

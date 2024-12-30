@@ -61,17 +61,18 @@ async def create_photo(
                - tags (List[str]): A list of tags associated with the photo.
                - image (str): The URL of the uploaded image in Cloudinary.
        """
+    print('aloo', file)
     tags = tags[0].split(",") if isinstance(tags, list) else tags.split(",")
 
     if len(tags) > 5:
         raise HTTPException(status_code=400, detail="You can add up to 5 tags.")
 
     tags = list(set(tags))
-
+    print('file', file)
     image_url, public_id = await upload_image_to_cloudinary(file)
 
     new_photo = Photo(
-        image=public_id,
+        image=image_url,
         description=description,
         user_id=user.id,
     )
