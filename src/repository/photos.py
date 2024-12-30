@@ -1,9 +1,13 @@
 import datetime
+from typing import Tuple, Any, List
+
+from fastapi import HTTPException
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.entity.models import Photo, User, photo_tag_association, Tag
+from src.entity.models import Photo, User, photo_tag_association, Tag, Like
+from src.services.rating_calculation import rating_calculation
 
 
 async def add_photo(url: str, description: str, db: AsyncSession, user_id: int) -> Photo:
@@ -86,10 +90,25 @@ async def read_photo(photo_id: int, db: AsyncSession) -> Photo | None:
     return photo.scalar_one_or_none()
 
 
-async def read_all_photos(limit: int, offset: int, db: AsyncSession, user_id: int):
+async def read_all_photos(
+        limit: int,
+        offset: int,
+        db: AsyncSession,
+        user_id: int,
+) -> list[Photo]:
+    """Gets all photos for the current user from the database.
+
+    Args:
+        limit (int): The maximum number of photos to return.
+        offset (int): The offset from which to start returning photos.
+        db (AsyncSession): The database session.
+        user_id (int): The ID of the user to filter photos by.
+
+    Returns:
+        list[Photo]: A list of photos that belong to the user.
+    """
     stmt = select(Photo).offset(offset).limit(limit)
-    if user_id != 0:
-        stmt = stmt.filter_by(user_id=user_id)
+    stmt = stmt.filter_by(user_id=user_id)
     contacts = await db.execute(stmt)
     return contacts.scalars().all()
 
@@ -169,3 +188,98 @@ async def search_photos_by_user(limit: int, offset: int, user_id: int, name: str
     stmt = stmt.order_by(Photo.user_id)
     photos = await db.execute(stmt)
     return photos.scalars().all()
+
+
+async def rate_photo(photo_id: int, like_value: int, user_id: int, db: AsyncSession) -> Photo | None:
+    """
+    Rates a photo.
+
+    Args:
+        photo_id (int): The ID of the photo to rate.
+        like_value (int): The value to rate the photo with.
+        user_id (int): The ID of the user who is rating the photo.
+        db (AsyncSession): The database session.
+
+    Raises:
+        HTTPException: If the user has already rated the photo.
+
+    Returns:
+        Photo | None: The rated photo if it exists, otherwise None.
+    """
+    stmt = select(Like).filter_by(photo_id=photo_id, user_id=user_id)
+    like = await db.execute(stmt)
+    like = like.scalar_one_or_none()
+    if like:
+        raise HTTPException(status_code=400, detail="You have already rated this photo")
+    like = Like(like_value=like_value, photo_id=photo_id, user_id=user_id)
+    db.add(like)
+    await db.commit()
+    await db.refresh(like)
+
+    return await rating_calculation(photo_id, db)
+
+
+async def view_rating_photo(photo_id: int, db: AsyncSession) -> list[dict]:
+    """
+    Gets all likes of a photo.
+
+    Args:
+        photo_id (int): The ID of the photo.
+        db (AsyncSession): The database session.
+
+    Raises:
+        HTTPException: If the photo does not exist.
+
+    Returns:
+        list[dict]: A list of dictionaries containing the like information. Each dictionary has the following keys:
+            id (int): The ID of the like.
+            like_value (int): The value of the like.
+            user_id (int): The ID of the user who liked the photo.
+            username (str): The username of the user who liked the photo.
+    """
+    stmt = (
+        select(
+            Photo.id,
+            Photo.image,
+            Photo.description,
+            Photo.rating,
+            Like.id.label("like_id"),
+            Like.like_value,
+            User.id.label("user_id"),
+            User.username,
+        )
+        .join(Like, Photo.id == Like.photo_id)
+        .join(User, User.id == Like.user_id)
+        .where(Photo.id == photo_id)
+    )
+    result = await db.execute(stmt)
+    if not result:
+        raise HTTPException(status_code=404, detail="Photo not found")
+    photos_rating = [dict(row) for row in result.mappings().all()]
+    return photos_rating
+
+
+async def delete_like_of_photo(like_id: int, db: AsyncSession) -> Photo | None:
+    """
+    Deletes a like of a photo and recalculates the photo's rating.
+
+    Args:
+        like_id (int): The ID of the like to delete.
+        db (AsyncSession): The database session.
+
+    Raises:
+        HTTPException: If the like does not exist.
+
+    Returns:
+        Photo | None: The photo if it exists, otherwise None.
+    """
+    stmt = select(Like).filter_by(id=like_id)
+    like = await db.execute(stmt)
+    like = like.scalar_one_or_none()
+    if not like:
+        raise HTTPException(status_code=404, detail="Like not found")
+    photo_id = like.photo_id
+    await db.delete(like)
+    await db.commit()
+
+    return await rating_calculation(photo_id, db)
