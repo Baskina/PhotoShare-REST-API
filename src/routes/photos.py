@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 from urllib.parse import urlparse, unquote
 from typing import List
 import cloudinary
@@ -8,7 +9,7 @@ from fastapi import APIRouter, Depends, status, Path, HTTPException, UploadFile,
 from fastapi_limiter.depends import RateLimiter
 
 
-from src.entity.models import User, Photo, Tag, photo_tag_association
+from src.entity.models import User, Photo,Tag
 from src.schemas.photos import PhotosSchemaResponse, PhotoValidationSchema,PhotoResponse,PhotoCreate
 
 from src.repository import photos as repositories_photos
@@ -19,8 +20,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.services.auth import auth_service
 from src.database.db import get_db
 from src.services.cloudinary import upload_image_to_cloudinary,generate_transformed_image_url
-
-
+from src.services.role import roles_required
 
 routerPhotos = APIRouter(prefix="/photos", tags=["photos"])
 
@@ -29,6 +29,7 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
+
 
 
 @routerPhotos.post("/", response_model=PhotoResponse)
@@ -59,7 +60,7 @@ async def create_photo(
                - description (str): The description of the photo.
                - tags (List[str]): A list of tags associated with the photo.
                - image (str): The URL of the uploaded image in Cloudinary.
-    """
+       """
     tags = tags[0].split(",") if isinstance(tags, list) else tags.split(",")
 
     if len(tags) > 5:
@@ -97,6 +98,95 @@ async def create_photo(
         "tags": tags,
         "image": image_url
     }
+
+
+@routerPhotos.get(
+    "/search",
+    response_model=list[PhotosSchemaResponse],
+    summary="Retrieve all photos by keyword and tag ID",
+    description="Gets all photos from the database by keyword and tag ID",
+    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
+)
+async def search_photos(
+        limit: int = Query(default=10, ge=0, le=50, description="The maximum number of photos to return"),
+        offset: int = Query(default=0, ge=0, description="The offset from which to start returning photos"),
+        keyword: str = Query(default=None, description="The keyword to search for in the description"),
+        tag_id: int = Query(default=None, ge=0, description="The ID of the tag to search for"),
+        min_rating: int = Query(default=0, ge=0, le=5, description="The minimum rating to search for"),
+        max_rating: int = Query(default=5, ge=0, le=5, description="The maximum rating to search for"),
+        min_created_at: datetime = Query(default="2020-01-01T00:00:00",
+                                         description="The minimum creation date to search for"),
+        max_created_at: datetime = Query(default=datetime.now(),
+                                         description="The maximum creation date to search for"),
+        db: AsyncSession = Depends(get_db),
+        current_user: User = Depends(auth_service.get_current_user),
+):
+    """
+    Gets all photos from the database by keyword and tag ID.
+
+    Args:
+        limit (int): The maximum number of photos to return.
+        offset (int): The offset from which to start returning photos.
+        keyword (str): The keyword to search for in the description.
+        tag_id (int): The ID of the tag to search for.
+        min_rating (int): The minimum rating to search for.
+        max_rating (int): The maximum rating to search for.
+        min_created_at (datetime): The minimum creation date to search for.
+        max_created_at (datetime): The maximum creation date to search for.
+        db (AsyncSession): The database session.
+        current_user (User): The currently authenticated user, obtained through authentication services.
+
+    Returns:
+        list[PhotosSchemaResponse]: A list of photos that match the search criteria.
+
+    Raises:
+        HTTPException: If no photos are found.
+    """
+    photos = await repositories_photos.search_photos(limit, offset, keyword, tag_id, min_rating, max_rating,
+                                                     min_created_at,
+                                                     max_created_at, db)
+    if not photos:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photos not found")
+    return photos
+
+
+@routerPhotos.get(
+    "/search/{user_id}",
+    response_model=list[PhotosSchemaResponse],
+    summary="Retrieve all photos by user ID",
+    description="Gets all photos from the database by user ID",
+)
+@roles_required(["admin", "moderator"])
+async def search_photos_by_user(
+        limit: int = Query(default=10, ge=0, le=50, description="The maximum number of photos to return"),
+        offset: int = Query(default=0, ge=0, description="The offset from which to start returning photos"),
+        user_id: int = Path(ge=0, description="User ID to search. If '0' - a list of photos of all users is displayed"),
+        name: str = Query(default=None, description="Part of username to search for"),
+        db: AsyncSession = Depends(get_db),
+        current_user: User = Depends(auth_service.get_current_user),
+) -> list[PhotosSchemaResponse]:
+    """
+    Gets all photos from the database by user ID.
+
+    Args:
+        limit (int): The maximum number of photos to return.
+        offset (int): The offset from which to start returning photos.
+        user_id (int): User ID to search. If '0' - a list of photos of all users is displayed.
+        name (str): The name of the user to search for.
+        db (AsyncSession): The database session.
+        current_user (User): The currently authenticated user, obtained through authentication services.
+
+    Returns:
+        list[PhotosSchemaResponse]: A list of photos that match the search criteria.
+
+    Raises:
+        HTTPException: If no photos are found.
+    """
+    photos = await repositories_photos.search_photos_by_user(limit, offset, user_id, name, db)
+    if not photos:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photos not found")
+    return photos
+
 
 @routerPhotos.delete(
     "/{photo_id}",
