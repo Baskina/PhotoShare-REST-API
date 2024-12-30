@@ -29,3 +29,4 @@ class PhotoCreate(PhotoBase):
 class PhotoResponse(PhotoCreate):
     id: int
     user_id: int
+    tags : List[str]
