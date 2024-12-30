@@ -103,7 +103,7 @@ async def create_photo(
     response_model=list[PhotosSchemaResponse],
     summary="Retrieve all photos by keyword and tag ID",
     description="Gets all photos from the database by keyword and tag ID",
-    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
+#    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
 )
 async def search_photos(
         limit: int = Query(default=10, ge=0, le=50, description="The maximum number of photos to return"),
@@ -191,7 +191,7 @@ async def search_photos_by_user(
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Delete a photo",
     description="Deletes a photo from the database",
-    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
+#    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
 )
 async def delete_photo(
         photo_id: int = Path(ge=1),
@@ -244,7 +244,7 @@ async def delete_photo(
     response_model=PhotosSchemaResponse,
     summary="Update description of a photo by ID",
     description="Updates description of a photo in the database by its ID",
-    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
+#    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
 )
 async def update_photo(
         photo_id: int,
@@ -282,7 +282,7 @@ async def update_photo(
     response_model=PhotosSchemaResponse,
     summary="Retrieve a photo by ID",
     description="Gets a photo from the database by its ID",
-    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
+#    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
 )
 async def read_photo(
         photo_id: int = Path(ge=1),
@@ -312,7 +312,7 @@ async def read_photo(
 @routerPhotos.get(
     "/",
     response_model=list[PhotosSchemaResponse],
-    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
+#    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
     summary="Retrieve all photos for the current user",
     description="Gets a list of photos for the current user from the database",
 )
@@ -406,7 +406,7 @@ async def transform_photo(
     response_model=PhotoValidationSchema,
     summary="Rate a photo",
     description="Rates a photo with a value between 1 and 5",
-    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
+#    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
 )
 async def rate_photo(
         photo_id: int = Path(ge=1, description="The ID of the photo to rate"),
