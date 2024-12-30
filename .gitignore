@@ -3,4 +3,5 @@
 /postgres-data
 /migration
 /venv
+**/__pycache__/
 __pycache__/
