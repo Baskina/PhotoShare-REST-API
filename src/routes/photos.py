@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, status, Path, HTTPException, UploadFile,
 from fastapi_limiter.depends import RateLimiter
 
 
-from src.entity.models import User, Photo,Tag
+from src.entity.models import User, Photo, Tag, photo_tag_association
 from src.schemas.photos import PhotosSchemaResponse, PhotoValidationSchema,PhotoResponse,PhotoCreate
 
 from src.repository import photos as repositories_photos
@@ -29,7 +29,6 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
-
 
 
 @routerPhotos.post("/", response_model=PhotoResponse)
@@ -60,7 +59,7 @@ async def create_photo(
                - description (str): The description of the photo.
                - tags (List[str]): A list of tags associated with the photo.
                - image (str): The URL of the uploaded image in Cloudinary.
-       """
+    """
     tags = tags[0].split(",") if isinstance(tags, list) else tags.split(",")
 
     if len(tags) > 5:
@@ -98,7 +97,6 @@ async def create_photo(
         "tags": tags,
         "image": image_url
     }
-
 
 @routerPhotos.delete(
     "/{photo_id}",
