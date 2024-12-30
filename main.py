@@ -78,7 +78,7 @@ async def healthchecker(db: AsyncSession = Depends(get_db)):
         print(e)
         raise HTTPException(status_code=500, detail="Error connecting to the database")
 
-templates = Jinja2Templates(directory="src/view/templates")
+templates = Jinja2Templates(directory="src/view")
 
 @app.get("/", response_class=templates.TemplateResponse)
 async def root(request: Request):
@@ -87,4 +87,4 @@ async def root(request: Request):
 
     :return: A rendered index.html template with the request context.
     """
-    return templates.TemplateResponse("index.html", context={"request": request})
+    return templates.TemplateResponse("templates/index.html", context={"request": request})

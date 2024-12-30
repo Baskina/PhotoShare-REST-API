@@ -1,13 +1,12 @@
 console.log("Run")
-
-const baseUrl = 'http://127.0.0.1:8000'
+import {baseUrl} from './config.js';
 
 const form = document.forms[0]
 
 const urlParams = new URLSearchParams(window.location.search);
 const message = urlParams.get("message");
 
-returnMessage = document.getElementById("return_message")
+const returnMessage = document.getElementById("return_message")
 
 if (message) {
     returnMessage.innerHTML = "";
@@ -49,11 +48,11 @@ form.addEventListener("submit", async(e) => {
 
     const response = await fetch(
         `${baseUrl}/api/auth/login`, 
-        requestOptions)
+        requestOptions);
     if (response.status == 200) {
-        result = await response.json()
-        localStorage.setItem("accessToken", result.access_token)
-        localStorage.setItem("refreshToken", result.refresh_token)
-        window.location = `/templates/images.html`
+        const result = await response.json()
+        localStorage.setItem("accessToken", result.access_token);
+        localStorage.setItem("refreshToken", result.refresh_token);
+        window.location = '/templates/images.html'
     }
 })

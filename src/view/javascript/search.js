@@ -1,6 +1,7 @@
-token = localStorage.getItem("accessToken")
+import {baseUrl} from './config.js';
 
-const baseUrl = 'https://svitlogram.fly.dev/'
+
+token = localStorage.getItem("accessToken")
 
 const searchParams = new URLSearchParams(window.location.search);
 const searchValue = searchParams.get('search');

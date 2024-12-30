@@ -1,8 +1,8 @@
-token = localStorage.getItem("accessToken")
+import {baseUrl} from './config.js';
 
-images = document.getElementById("images")
+const token = localStorage.getItem("accessToken")
 
-const baseUrl = 'https://svitlogram.fly.dev'
+const images = document.getElementById("images")
 
 const urlParams = new URLSearchParams(window.location.search);
 const message = urlParams.get("message");

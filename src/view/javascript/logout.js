@@ -1,4 +1,3 @@
-token = localStorage.getItem("accessToken")
 
 async function logout() {
     const url = `${baseUrl}/api/logout`;
