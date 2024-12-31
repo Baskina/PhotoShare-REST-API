@@ -11,9 +11,9 @@ class Settings(BaseSettings):
     REDIS_DOMAIN: str = "localhost"
     REDIS_PORT: int = 6379
     REDIS_PASSWORD: str | None = None
-    CLD_NAME: str = "ddkhc0hci"
-    CLD_API_KEY: int = 337619357218213
-    CLD_API_SECRET: str = "secret"
+    CLD_NAME: str = "dg1xy2jt4"
+    CLD_API_KEY: int = 849225249311251
+    CLD_API_SECRET: str = "-hXrkyYwcFFxJGNUxlZlLbTRot0"
     CLD_FOLDER: str = "Digital workspace"
 
     MAIL_USERNAME: str = "email@gmail.com"
