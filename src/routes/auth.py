@@ -73,7 +73,7 @@ async def signup(
         )
     
     body.hash = auth_service.get_password_hash(body.hash)
-  
+    
     # If this is the first user, they will be an administrator
     user_count = await repository_users.count_users(db)
     if user_count == 0:
