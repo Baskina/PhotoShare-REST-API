@@ -1,15 +1,15 @@
 import uuid
+from datetime import datetime
 from urllib.parse import urlparse, unquote
 from typing import List
 import cloudinary
 import cloudinary.uploader
 
-from fastapi import APIRouter, Depends, status, Path, HTTPException, UploadFile, File, Query,Form
+from fastapi import APIRouter, Depends, status, Path, HTTPException, UploadFile, File, Query, Form
 from fastapi_limiter.depends import RateLimiter
 
-
-from src.entity.models import User, Photo,Tag
-from src.schemas.photos import PhotosSchemaResponse, PhotoValidationSchema,PhotoResponse,PhotoCreate
+from src.entity.models import User, Photo, Tag
+from src.schemas.photos import PhotosSchemaResponse, PhotoValidationSchema, PhotoResponse, PhotoCreate
 
 from src.repository import photos as repositories_photos
 
@@ -18,9 +18,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.services.auth import auth_service
 from src.database.db import get_db
-from src.services.cloudinary import upload_image_to_cloudinary,generate_transformed_image_url
-
-
+from src.services.cloudinary import upload_image_to_cloudinary, generate_transformed_image_url
+from src.services.role import roles_required
 
 routerPhotos = APIRouter(prefix="/photos", tags=["photos"])
 
@@ -29,7 +28,6 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
-
 
 
 @routerPhotos.post("/", response_model=PhotoResponse)
@@ -100,12 +98,100 @@ async def create_photo(
     }
 
 
+@routerPhotos.get(
+    "/search",
+    response_model=list[PhotosSchemaResponse],
+    summary="Retrieve all photos by keyword and tag ID",
+    description="Gets all photos from the database by keyword and tag ID",
+#    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
+)
+async def search_photos(
+        limit: int = Query(default=10, ge=0, le=50, description="The maximum number of photos to return"),
+        offset: int = Query(default=0, ge=0, description="The offset from which to start returning photos"),
+        keyword: str = Query(default=None, description="The keyword to search for in the description"),
+        tag_id: int = Query(default=None, ge=0, description="The ID of the tag to search for"),
+        min_rating: int = Query(default=0, ge=0, le=5, description="The minimum rating to search for"),
+        max_rating: int = Query(default=5, ge=0, le=5, description="The maximum rating to search for"),
+        min_created_at: datetime = Query(default="2020-01-01T00:00:00",
+                                         description="The minimum creation date to search for"),
+        max_created_at: datetime = Query(default=datetime.now(),
+                                         description="The maximum creation date to search for"),
+        db: AsyncSession = Depends(get_db),
+        current_user: User = Depends(auth_service.get_current_user),
+):
+    """
+    Gets all photos from the database by keyword and tag ID.
+
+    Args:
+        limit (int): The maximum number of photos to return.
+        offset (int): The offset from which to start returning photos.
+        keyword (str): The keyword to search for in the description.
+        tag_id (int): The ID of the tag to search for.
+        min_rating (int): The minimum rating to search for.
+        max_rating (int): The maximum rating to search for.
+        min_created_at (datetime): The minimum creation date to search for.
+        max_created_at (datetime): The maximum creation date to search for.
+        db (AsyncSession): The database session.
+        current_user (User): The currently authenticated user, obtained through authentication services.
+
+    Returns:
+        list[PhotosSchemaResponse]: A list of photos that match the search criteria.
+
+    Raises:
+        HTTPException: If no photos are found.
+    """
+    photos = await repositories_photos.search_photos(limit, offset, keyword, tag_id, min_rating, max_rating,
+                                                     min_created_at,
+                                                     max_created_at, db)
+    if not photos:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photos not found")
+    return photos
+
+
+@routerPhotos.get(
+    "/search/{user_id}",
+    response_model=list[PhotosSchemaResponse],
+    summary="Retrieve all photos by user ID",
+    description="Gets all photos from the database by user ID",
+)
+@roles_required(["admin", "moderator"])
+async def search_photos_by_user(
+        limit: int = Query(default=10, ge=0, le=50, description="The maximum number of photos to return"),
+        offset: int = Query(default=0, ge=0, description="The offset from which to start returning photos"),
+        user_id: int = Path(ge=0, description="User ID to search. If '0' - a list of photos of all users is displayed"),
+        name: str = Query(default=None, description="Part of username to search for"),
+        db: AsyncSession = Depends(get_db),
+        current_user: User = Depends(auth_service.get_current_user),
+) -> list[PhotosSchemaResponse]:
+    """
+    Gets all photos from the database by user ID.
+
+    Args:
+        limit (int): The maximum number of photos to return.
+        offset (int): The offset from which to start returning photos.
+        user_id (int): User ID to search. If '0' - a list of photos of all users is displayed.
+        name (str): The name of the user to search for.
+        db (AsyncSession): The database session.
+        current_user (User): The currently authenticated user, obtained through authentication services.
+
+    Returns:
+        list[PhotosSchemaResponse]: A list of photos that match the search criteria.
+
+    Raises:
+        HTTPException: If no photos are found.
+    """
+    photos = await repositories_photos.search_photos_by_user(limit, offset, user_id, name, db)
+    if not photos:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photos not found")
+    return photos
+
+
 @routerPhotos.delete(
     "/{photo_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Delete a photo",
     description="Deletes a photo from the database",
-    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
+#    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
 )
 async def delete_photo(
         photo_id: int = Path(ge=1),
@@ -132,15 +218,12 @@ async def delete_photo(
         parsed_url = urlparse(image_to_delete)
 
         print(f"Parsed URL path: {parsed_url.path}")
-
         path_parts = parsed_url.path.split('/')
-
 
         if len(path_parts) >= 1:
             public_id = path_parts[-1].split('.')[0]
         else:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid URL format for public_id")
-
 
         try:
             result = cloudinary.uploader.destroy(public_id=public_id, invalidate=True)
@@ -154,12 +237,14 @@ async def delete_photo(
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Cloudinary error: {str(e)}")
     else:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You don't have permission")
+
+
 @routerPhotos.put(
     "/{photo_id}",
     response_model=PhotosSchemaResponse,
     summary="Update description of a photo by ID",
     description="Updates description of a photo in the database by its ID",
-    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
+#    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
 )
 async def update_photo(
         photo_id: int,
@@ -197,7 +282,7 @@ async def update_photo(
     response_model=PhotosSchemaResponse,
     summary="Retrieve a photo by ID",
     description="Gets a photo from the database by its ID",
-    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
+#    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
 )
 async def read_photo(
         photo_id: int = Path(ge=1),
@@ -226,45 +311,35 @@ async def read_photo(
 
 @routerPhotos.get(
     "/",
-    response_model=list[PhotoValidationSchema],
-    summary="Retrieve all photos",
-    description="Gets all photos from the database",
-    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
+    response_model=list[PhotosSchemaResponse],
+#    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
+    summary="Retrieve all photos for the current user",
+    description="Gets a list of photos for the current user from the database",
 )
 async def read_photos(
         limit: int = Query(default=10, ge=0, le=50, description="The maximum number of photos to return"),
         offset: int = Query(default=0, ge=0, description="The offset from which to start returning photos"),
-        all_photos: bool = Query(default=False,
-                                 description="Flag to get all photos from the database; default (False) is only photos of the current user"),
         db: AsyncSession = Depends(get_db),
         current_user: User = Depends(auth_service.get_current_user),
-):
+) -> list[PhotosSchemaResponse]:
     """
-    Gets all photos from the database.
+    Retrieves a list of photos for the current user.
 
     Args:
-        limit (int): The maximum number of photos to return. Defaults to 10.
-        offset (int): The offset from which to start returning photos. Defaults to 0.
-        all_photos (bool): A flag to get all photos from the database. Defaults to False - only photos of the current user.
+        limit (int): The maximum number of photos to return.
+        offset (int): The offset from which to start returning photos.
         db (AsyncSession): The database session.
-        current_user (User): The currently authenticated user, obtained through authentication services.
+        current_user (User): The currently authenticated user.
 
     Returns:
-        list[PhotosSchemaResponse]: A list of photos that match the provided filters.
+        list[PhotosSchemaResponse]: A list of photos that belong to the current user.
     """
-    if not all_photos:
-        id_user = current_user.id
-    else:
-        id_user = 0
-
-    photos = await repositories_photos.read_all_photos(limit=limit, offset=offset, db=db, user_id=id_user)
-
-
+    photos = await repositories_photos.read_all_photos(limit=limit, offset=offset, db=db, user_id=current_user.id)
     for photo in photos:
         if not photo.description:
             photo.description = "No description provided"
-
     return photos
+
 
 @routerPhotos.get("/{photo_id}/transform")
 async def transform_photo(
@@ -303,7 +378,6 @@ async def transform_photo(
             dict: A dictionary containing the transformed image URL.
                 - transformed_url (str): The URL of the transformed image.
         """
-
     photo_result = await session.execute(select(Photo).where(Photo.id == photo_id))
     photo = photo_result.scalars().first()
 
@@ -313,9 +387,7 @@ async def transform_photo(
     if photo.user_id != user.id and user.role != "admin":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Permission denied")
 
-
     transformations = {"width": width, "height": height, "crop": crop}
-
     if angle:
         transformations["angle"] = angle
     if effect:
@@ -325,6 +397,97 @@ async def transform_photo(
     if format:
         transformations["format"] = format
 
-
     transformed_url = generate_transformed_image_url(photo.image.split("/")[-1].split(".")[0], transformations)
     return {"transformed_url": transformed_url}
+
+
+@routerPhotos.put(
+    "/{photo_id}/rating",
+    response_model=PhotoValidationSchema,
+    summary="Rate a photo",
+    description="Rates a photo with a value between 1 and 5",
+#    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
+)
+async def rate_photo(
+        photo_id: int = Path(ge=1, description="The ID of the photo to rate"),
+        like_value: int = Query(ge=1, le=5, description="The value to rate the photo with"),
+        db: AsyncSession = Depends(get_db),
+        current_user: User = Depends(auth_service.get_current_user),
+):
+    """Rates a photo with a value between 1 and 5.
+
+    Args:
+        photo_id (int): The ID of the photo to rate.
+        like_value (int): The value to rate the photo with.
+        db (AsyncSession): The database session.
+        current_user (User): The currently authenticated user.
+
+    Raises:
+        HTTPException:
+            - 404: If the photo with the given ID is not found.
+            - 400: If the rating value is not between 1 and 5.
+            - 400: If the current user is the same as the photo's user.
+
+    Returns:
+        PhotosSchemaResponse: The rated photo.
+    """
+    photo = await repositories_photos.read_photo(photo_id, db)
+    if not photo:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found")
+    if current_user.id == photo.user_id:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You can't rate your own photo")
+    await repositories_photos.rate_photo(photo_id, like_value, current_user.id, db)
+    return photo
+
+
+@routerPhotos.get(
+    "/{photo_id}/rating",
+    response_model=list[dict],
+    summary="View likes of a photo",
+    description="Retrieves all likes of a photo by its ID",
+)
+@roles_required(["admin", "moderator"])
+async def view_rating_photo(
+        photo_id: int = Path(ge=1, description="The ID of the photo to view likes"),
+        db: AsyncSession = Depends(get_db),
+        current_user: User = Depends(auth_service.get_current_user),
+):
+    """
+    Retrieves all likes of a photo by its ID.
+
+    Args:
+        photo_id (int): The ID of the photo to view likes.
+        db (AsyncSession): The database session.
+        current_user (User): The currently authenticated user.
+
+    Returns:
+        list[dict]: A list of dictionaries containing the like information.
+    """
+    result = await repositories_photos.view_rating_photo(photo_id, db)
+    return result
+
+
+@routerPhotos.delete(
+    "/rating/{like_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete a like of a photo",
+    description="Deletes a like of a photo by its ID",
+)
+@roles_required(["admin", "moderator"])
+async def delete_like_of_photo(
+        like_id: int = Path(ge=1, description="The ID of the like to delete"),
+        db: AsyncSession = Depends(get_db),
+        current_user: User = Depends(auth_service.get_current_user),
+) -> None:
+    """
+    Deletes a like of a photo by its ID.
+
+    Args:
+        like_id (int): The ID of the like to delete.
+        db (AsyncSession): The database session.
+        current_user (User): The currently authenticated user.
+
+    Returns:
+        None
+    """
+    return await repositories_photos.delete_like_of_photo(like_id, db)

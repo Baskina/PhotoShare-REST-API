@@ -1,4 +1,4 @@
-from sqlalchemy import String, Date, Integer, ForeignKey, DateTime, func, Boolean, Column, Table
+from sqlalchemy import String, Date, Integer, ForeignKey, DateTime, func, Boolean, Column, Table, Float
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship
 from pydantic import EmailStr
 from datetime import date
@@ -36,7 +36,7 @@ class Photo(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     image: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[Optional[str]] = mapped_column(String(250))
-    rating: Mapped[int] = mapped_column(Integer, nullable=True)
+    rating: Mapped[float] = mapped_column(Float, nullable=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'), nullable=False)
     user: Mapped["User"] = relationship("User", backref="photo", lazy="joined")
     created_at: Mapped[date] = mapped_column('created_at', DateTime, default=func.now(), nullable=True)
@@ -53,15 +53,16 @@ class Tag(Base):
 
 
 class Comment(Base):
-    __tablename__ = 'comment'
-    id: Mapped[int] = mapped_column(primary_key=True)
-    text: Mapped[str] = mapped_column(String(250), nullable=False)
-    photo_id: Mapped[int] = mapped_column(Integer, ForeignKey('photo.id'), nullable=False)
-    photo: Mapped["Photo"] = relationship("Photo", backref="comment", lazy="joined")
-    user_id: Mapped[int] = mapped_column(Integer, nullable=False)
-    created_at: Mapped[date] = mapped_column('created_at', DateTime, default=func.now(), nullable=True)
-    updated_at: Mapped[date] = mapped_column('updated_at', DateTime, default=func.now(),
-                                             onupdate=func.now(), nullable=True)
+    __tablename__ = "comments"  
+
+    id: Mapped[int] = mapped_column(primary_key=True)  
+    text: Mapped[str] = mapped_column(String(250), nullable=False)  
+    photo_id: Mapped[int] = mapped_column(ForeignKey("photos.id"), nullable=False)  
+    photo: Mapped["Photo"] = relationship("Photo", back_populates="comments", lazy="joined")  
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)  
+    user: Mapped["User"] = relationship("User", back_populates="comments", lazy="joined")  
+    created_at: Mapped[date] = mapped_column(DateTime, default=func.now(), nullable=False)  
+    updated_at: Mapped[date] = mapped_column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)  
 
 
 class Like(Base):

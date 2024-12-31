@@ -4,3 +4,5 @@
 /migration
 /venv
 **/__pycache__/
+*.py~
+*.db~
