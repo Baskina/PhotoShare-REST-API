@@ -1,7 +1,0 @@
-__pycache__/
-*.pyc.env
-.idea
-/postgres-data
-/migration
-/venv
-__pycache__/
