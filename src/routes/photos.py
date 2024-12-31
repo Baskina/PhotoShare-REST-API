@@ -69,7 +69,7 @@ async def create_photo(
     image_url, public_id = await upload_image_to_cloudinary(file)
 
     new_photo = Photo(
-        image=public_id,
+        image=image_url,
         description=description,
         user_id=user.id,
     )

@@ -5,6 +5,7 @@ from fastapi import HTTPException
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import or_
 
 from src.entity.models import Photo, User, photo_tag_association, Tag, Like
 from src.services.rating_calculation import rating_calculation
@@ -153,9 +154,9 @@ async def search_photos(
     if tag_id:
         stmt = stmt.filter(photo_tag_association.c.tag_id == tag_id)
     if min_rating:
-        stmt = stmt.filter(Photo.rating >= min_rating)
+        stmt = stmt.filter(or_(Photo.rating >= min_rating, Photo.rating.is_(None)))
     if max_rating:
-        stmt = stmt.filter(Photo.rating <= max_rating)
+        stmt = stmt.filter(or_(Photo.rating <= max_rating, Photo.rating.is_(None)))
     if min_created_at:
         stmt = stmt.filter(Photo.created_at >= min_created_at)
     if max_created_at:
@@ -164,6 +165,7 @@ async def search_photos(
     stmt = stmt.order_by(Photo.created_at.desc())
     photos = await db.execute(stmt)
     return photos.scalars().all()
+
 
 
 async def search_photos_by_user(limit: int, offset: int, user_id: int, name: str, db: AsyncSession) -> list[Photo]:
