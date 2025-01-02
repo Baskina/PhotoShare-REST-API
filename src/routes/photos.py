@@ -75,16 +75,16 @@ async def create_photo(
     )
 
     session.add(new_photo)
+    if len("".join(tags)) > 0:
+        for tag_name in tags:
+            tag_result = await session.execute(select(Tag).where(Tag.name == tag_name))
+            tag = tag_result.scalars().first()
 
-    for tag_name in tags:
-        tag_result = await session.execute(select(Tag).where(Tag.name == tag_name))
-        tag = tag_result.scalars().first()
+            if not tag:
+                tag = Tag(name=tag_name)
+                session.add(tag)
 
-        if not tag:
-            tag = Tag(name=tag_name)
-            session.add(tag)
-
-        new_photo.photo_tags.append(tag)
+            new_photo.photo_tags.append(tag)
 
     await session.commit()
     await session.refresh(new_photo)
@@ -94,7 +94,7 @@ async def create_photo(
         "user_id": new_photo.user_id,
         "description": new_photo.description,
         "tags": tags,
-        "image": image_url
+        "image": image_url,
     }
 
 
