@@ -5,17 +5,18 @@ from typing import List, Optional
 class PhotoValidationSchema(BaseModel):
     image: str
     description: str
-    rating: Optional[int]
+    rating: Optional[float]
 
 
 class PhotosSchemaResponse(PhotoValidationSchema):
     id: int = 1
     image: str
     description: str
-    rating: Optional[int]
+    rating: Optional[float]
     user_id: int
     created_at: datetime
     updated_at: datetime
+
 
 class PhotoBase(BaseModel):
     description: Optional[str] = None
@@ -29,3 +30,4 @@ class PhotoCreate(PhotoBase):
 class PhotoResponse(PhotoCreate):
     id: int
     user_id: int
+    tags : List[str]

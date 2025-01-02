@@ -72,7 +72,7 @@ async def signup(
             status_code=status.HTTP_409_CONFLICT, detail="Account already exists"
         )
     
-    body.hash = auth_service.get_password_hash(body.password)
+    body.hash = auth_service.get_password_hash(body.hash)
     
     # If this is the first user, they will be an administrator
     user_count = await repository_users.count_users(db)
