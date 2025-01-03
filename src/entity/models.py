@@ -80,7 +80,7 @@ class PhotoTransfer(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     image: Mapped[str] = mapped_column(String(255), nullable=False)
     link_url: Mapped[str] = mapped_column(String(255), nullable=False)
-    link_qr: Mapped[str] = mapped_column(String(255), nullable=False)
+    link_qr: Mapped[str] = mapped_column(String(255), nullable=True)
     photo_id: Mapped[int] = mapped_column(Integer, ForeignKey('photo.id'), nullable=False)
     photo: Mapped["Photo"] = relationship("Photo", backref="transfer", lazy="joined")
 
