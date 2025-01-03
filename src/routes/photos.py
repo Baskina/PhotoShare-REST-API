@@ -8,7 +8,8 @@ import cloudinary.uploader
 from fastapi import APIRouter, Depends, status, Path, HTTPException, UploadFile, File, Query, Form
 from fastapi_limiter.depends import RateLimiter
 
-from src.entity.models import User, Photo, Tag
+from src.entity.models import User, Photo, Tag, PhotoTransfer
+from src.schemas.photo_transfer import PhotoTransferResponse
 from src.schemas.photos import PhotosSchemaResponse, PhotoValidationSchema, PhotoResponse, PhotoCreate
 
 from src.repository import photos as repositories_photos
@@ -18,7 +19,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.services.auth import auth_service
 from src.database.db import get_db
-from src.services.cloudinary import upload_image_to_cloudinary, generate_transformed_image_url
+from src.services.cloudinary import upload_image_to_cloudinary, generate_transformed_image_url, upload_qr_to_cloudinary
 from src.services.role import roles_required
 
 routerPhotos = APIRouter(prefix="/photos", tags=["photos"])
@@ -75,16 +76,16 @@ async def create_photo(
     )
 
     session.add(new_photo)
+    if len("".join(tags)) > 0:
+        for tag_name in tags:
+            tag_result = await session.execute(select(Tag).where(Tag.name == tag_name))
+            tag = tag_result.scalars().first()
 
-    for tag_name in tags:
-        tag_result = await session.execute(select(Tag).where(Tag.name == tag_name))
-        tag = tag_result.scalars().first()
+            if not tag:
+                tag = Tag(name=tag_name)
+                session.add(tag)
 
-        if not tag:
-            tag = Tag(name=tag_name)
-            session.add(tag)
-
-        new_photo.photo_tags.append(tag)
+            new_photo.photo_tags.append(tag)
 
     await session.commit()
     await session.refresh(new_photo)
@@ -94,7 +95,7 @@ async def create_photo(
         "user_id": new_photo.user_id,
         "description": new_photo.description,
         "tags": tags,
-        "image": image_url
+        "image": image_url,
     }
 
 
@@ -398,6 +399,12 @@ async def transform_photo(
         transformations["format"] = format
 
     transformed_url = generate_transformed_image_url(photo.image.split("/")[-1].split(".")[0], transformations)
+
+    photo = await repositories_photos.save_transform_photo(photo_id, photo.image.split("/")[-1].split(".")[0],
+                                                           transformed_url, session)
+    if not photo:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Transformed photo not save")
+
     return {"transformed_url": transformed_url}
 
 
@@ -491,3 +498,42 @@ async def delete_like_of_photo(
         None
     """
     return await repositories_photos.delete_like_of_photo(like_id, db)
+
+
+@routerPhotos.post(
+    "/create-qr-code",
+    response_model=PhotoTransferResponse,
+    summary="Create URL and QR code for a photo",
+)
+@roles_required(["admin", "moderator"])
+async def create_qr_code(
+        photo_transfer_id: int,
+        db: AsyncSession = Depends(get_db),
+        current_user: User = Depends(auth_service.get_current_user),
+):
+    """
+    Generates a QR code URL for a transformed photo's link and saves it to the database.
+
+    Args:
+    current_user (User): The currently authenticated user.
+    photo_transfer_id (int): The ID of the PhotoTransfer record to update.
+    db (AsyncSession): The database session used for database operations.
+    base_url (str): The base URL of the server where the QR code will be hosted.
+
+    Returns:
+        PhotoTransfer | None: The updated PhotoTransfer record if successful, otherwise None.
+
+    Raises:
+        HTTPException: If the PhotoTransfer record with the given ID is not found.
+    """
+    photo_transfer_result = await db.execute(
+        select(PhotoTransfer).where(PhotoTransfer.id == photo_transfer_id)
+    )
+    photo_transfer = photo_transfer_result.scalars().first()
+
+    if not photo_transfer:
+        raise HTTPException(status_code=404, detail="Photo record not found")
+
+    link_qr = await upload_qr_to_cloudinary(photo_transfer.link_url)
+    result = await repositories_photos.generate_and_save_qr(photo_transfer, link_qr, db)
+    return result

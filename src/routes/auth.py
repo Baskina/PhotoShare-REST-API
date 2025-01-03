@@ -31,7 +31,9 @@ from src.services.email import (
     send_email,
 )
 from fastapi.security import OAuth2PasswordBearer
-from src.entity.models import User
+from src.entity.models import User, Blacklist
+from sqlalchemy.future import select
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -125,6 +127,13 @@ async def login(
         "refresh_token": refresh_token,
         "token_type": "bearer",
     }
+async def add_token_to_blacklist(token: str, db: AsyncSession):
+    db.add(Blacklist(token=token))
+    await db.commit()
+
+async def is_token_blacklisted(token: str, db: AsyncSession) -> bool:
+    result = await db.execute(select(Blacklist).filter(Blacklist.token == token))
+    return result.scalar_one_or_none() is not None
 
 @router.post("/logout", status_code=status.HTTP_200_OK)
 async def logout(
@@ -132,24 +141,9 @@ async def logout(
     db: AsyncSession = Depends(get_db)
 ):
     """
-    Logic for logging out the user.
-    
-    In a JWT-based authentication system, there is typically no need to delete the token server-side.
-    Once the token expires, it is automatically invalid. However, if you want to immediately revoke the token,
-    you can add it to a blacklist for immediate invalidation.
-
-    Args:
-        token (str): The user's access token to invalidate.
-        db (AsyncSession): The database session.
-
-    Returns:
-        dict: A message indicating the user has successfully logged out.
-
-    Example:
-        {
-            "message": "Successfully logged out"
-        }
+     Logic for logging out the user. The token is added to the blacklist to immediately deactivate it.
     """
+    await add_token_to_blacklist(token, db)
     return {"message": "Successfully logged out"}
 
 @router.get("/refresh_token", response_model=TokenSchema)
@@ -220,22 +214,18 @@ async def confirmed_email(token: str, db: AsyncSession = Depends(get_db)):
 
 async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)):
     """
-    Decodes the access token and retrieves the associated user from the database.
-
-    Args:
-        token (str): The user's access token.
-        db (AsyncSession): The database session.
-
-    Returns:
-        User: The user object corresponding to the decoded token.
-
-    Raises:
-        HTTPException: If the token is invalid or the user does not exist (401 Unauthorized).
+    Decodes the access token and retrieves the user, checking if the token is not blacklisted.
     """
     email = await auth_service.decode_access_token(token)
+    
+   # Check if the token is in the blacklist
+    if await is_token_blacklisted(token, db):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has been blacklisted")
+    
     user = await repository_users.get_user_by_email(email, db)
     if user is None:
         raise HTTPException(status_code=401, detail="Invalid credentials")
+    
     return user
 
 def role_required(required_role: str):
