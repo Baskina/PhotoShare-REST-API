@@ -3,6 +3,7 @@ from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship
 from pydantic import EmailStr
 from datetime import date
 from typing import Optional
+from datetime import datetime
 
 
 class Base(DeclarativeBase):
@@ -82,3 +83,13 @@ class PhotoTransfer(Base):
     link_qr: Mapped[str] = mapped_column(String(255), nullable=True)
     photo_id: Mapped[int] = mapped_column(Integer, ForeignKey('photo.id'), nullable=False)
     photo: Mapped["Photo"] = relationship("Photo", backref="transfer", lazy="joined")
+
+class Blacklist(Base):
+    __tablename__ = 'blacklist'
+    
+    id = Column(Integer, primary_key=True, index=True)
+    token = Column(String, unique=True, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    def __init__(self, token: str):
+        self.token = token
