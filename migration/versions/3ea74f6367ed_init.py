@@ -1,8 +1,8 @@
 """Init
 
-Revision ID: ec76521c3d54
+Revision ID: 3ea74f6367ed
 Revises: 
-Create Date: 2024-12-24 15:47:18.366595
+Create Date: 2025-01-02 13:19:16.212183
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'ec76521c3d54'
+revision: str = '3ea74f6367ed'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -44,7 +44,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('image', sa.String(length=255), nullable=False),
     sa.Column('description', sa.String(length=250), nullable=True),
-    sa.Column('rating', sa.Integer(), nullable=True),
+    sa.Column('rating', sa.Float(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
@@ -56,9 +56,10 @@ def upgrade() -> None:
     sa.Column('text', sa.String(length=250), nullable=False),
     sa.Column('photo_id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['photo_id'], ['photo.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('like',
@@ -80,7 +81,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('image', sa.String(length=255), nullable=False),
     sa.Column('link_url', sa.String(length=255), nullable=False),
-    sa.Column('link_qr', sa.String(length=255), nullable=False),
+    sa.Column('link_qr', sa.String(length=255), nullable=True),
     sa.Column('photo_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['photo_id'], ['photo.id'], ),
     sa.PrimaryKeyConstraint('id')
