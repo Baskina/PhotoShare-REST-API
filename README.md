@@ -127,10 +127,10 @@ After starting the server, navigate to `http://127.0.0.1:8000/docs` to explore t
 - Get a specific photo by its ID
 - Available to all users
 
-- **Get all photos**
+- **Get a list of photos for the current user**
 - `GET /api/photos/`
-- Get a list of all photos (your own or all)
-- Available to all users
+- Get a list of all your photos
+- available to all users
 
 ### Authentication Endpoints
 
@@ -156,10 +156,33 @@ After starting the server, navigate to `http://127.0.0.1:8000/docs` to explore t
   - `POST /api/users/avatar`
   - Upload or update the user’s profile avatar. The image is stored on Cloudinary.
 
-### Additional Features
-- **Search contacts**
-  - `GET /api/contacts/search?name=<name>&lastName=<lastName>&email=<email>`
-  - Search for contacts based on first name, last name, or email address.
+### Additional functions
+- **Photo search**
+- `GET /api/photos/search`
+- Search for photos by keyword in description and by tag, as well as filter by rating and by photo creation date.
+
+- **Photo search by author**
+- `GET /api/photos/search/{user_id}`
+- Search for photos by photo author: by user ID and by username.
+
+- **Transforms a photo**
+- `GET /api/photos/{photo_id}/transform`
+- Transforms a photo by applying various modifications such as resizing, cropping, rotating, and adding effects..
+
+- **Photo rating**
+- `PUT /api/photos/{photo_id}/rating`
+- Rate a photo from 0 to 5. Calculates the photo rating - the average value of all likes. The rating value for unrated photos is Null.
+- You can rate a photo only once. You cannot rate your own photo.
+
+- **View all likes for a photo**
+- `GET /api/photos/{photo_id}/rating`
+- View all likes for a photo by photo ID.
+- Only available to moderators and administrators.
+
+- **Delete likes for a photo**
+- `GET /api/photos/rating/{like_id}`
+- Delete likes for a photo by like ID.
+- Only available to moderators and administrators.
 
 ## Authentication & Authorization
 The project includes authentication and authorization mechanisms to restrict access to registered users only.

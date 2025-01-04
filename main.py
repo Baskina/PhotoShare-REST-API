@@ -11,7 +11,7 @@ from fastapi.responses import HTMLResponse
 
 
 from src.routes.tag import router_tag
-from src.routes import users, auth, photos
+from src.routes import users, auth, photos, comments
 from src.database.db import get_db
 from src.services.middlewares import ProcessTimeHeaderMiddleware
 from src.conf.config import config
@@ -34,6 +34,9 @@ app.add_middleware(
 
 app.include_router(auth.router, prefix='/api')
 app.include_router(users.routerUsers, prefix='/api')
+app.include_router(comments.router, prefix='/api') 
+
+
 app.include_router(photos.routerPhotos, prefix='/api')
 app.include_router(router_tag)
 
