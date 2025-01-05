@@ -42,7 +42,9 @@ star_5.addEventListener("click", () => {
 
 // Function to update rating
 const press_rating = async (n) => {
-    console.log('pres')
+    if (!token) {
+        window.location.href = "/templates/login.html";
+    }
     remove();
     for (let i = 0; i < n; i++) {
         let cls =''
@@ -61,17 +63,10 @@ const press_rating = async (n) => {
         `Bearer ${token}`);
 
 
-    const data = {
-        photo_id: +photo_id,
-        like_value: +n
-    }
 
-    console.log('photo_id', photo_id);
-    console.log('n', n);
     const requestOptions = {
         method: 'PUT',
-        headers: myHeaders,
-        body: JSON.stringify(data)
+        headers: myHeaders
     };
 
 
@@ -80,6 +75,9 @@ const press_rating = async (n) => {
         const result = await response.json()
         error.style.color = 'red';
         error.textContent = result.detail;
+    }
+    if (response.status === 401) {
+        window.location = '/templates/login.html';
     }
 }
 

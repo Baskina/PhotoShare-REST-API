@@ -44,11 +44,11 @@
     <div class="container">
         <div class="row mb-3">
             <div id="image"></div>
-            <h2>Comments:</h2>
-            <div id="comments"></div>
-            <h2>What is your opinion about the photo? Tell us:</h2>
+            <h3 style="color: #8879d8">Comments:</h3>
+            <div class="mb-3" id="comments"></div>
+            <h3 style="color: #8879d8">What is your opinion about the photo? Tell us:</h3>
             <div id="rating">
-                <div class="rating_container">
+                <div class="rating-container mb-5">
                     <span id="star1"
                           class="star">★
         </span>
@@ -64,10 +64,11 @@
                     <span id="star5"
                           class="star">★
         </span>
+                    <div id="error"></div>
                 </div>
-        <div id="error"></div>
 
-                <div id="comment">
+
+                <div id="comment" class="mb-5">
                     <form>
                         <div class="form-floating mb-2">
                             <input type="text" class="form-control bg-transparent border-color-primary" name="comment" id="comment-text" placeholder="comment">

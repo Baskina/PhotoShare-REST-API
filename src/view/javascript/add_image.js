@@ -8,39 +8,42 @@ if (!token) {
     window.location.href = "/templates/login.html";
 }
 
-console.log('token', token)
+const message = document.getElementById("message");
 
 form.addEventListener("submit", async(e) => {
     e.preventDefault()
-    console.log('here??', form, form.file.value, form.description.value, form.tags.value)
     const description = form.description.value
-    const tags = form.tags.value
-    const url = form.file.value
+    const tags = form.tags.value.split(" ");
 
     const myHeaders = new Headers();
     myHeaders.append(
         "Authorization",
         `Bearer ${token}`);
 
-    // const urlencoded = new URLSearchParams();
-    // urlencoded.append("username", username);
-    // urlencoded.append("password", password);
+    const fileInput = document.getElementById('file');
+    const file = fileInput.files[0];
 
-    var requestOptions = {
+    const formData = new FormData();
+    formData.append('description', description);
+    formData.append('tags', tags);
+    formData.append('file', file);
+
+    const requestOptions = {
         method: 'POST',
         headers: myHeaders,
-        body: {
-            description: description,
-            tags: tags,
-            url: url
-        },
-        redirect: 'follow'
+        body: formData
     };
-
     const response = await fetch(
         `${baseUrl}/api/photos`,
         requestOptions);
+
     if (response.status == 200) {
-        const result = await response.json()
+        message.textContent = "Image uploaded successfully";
+        message.className ="text-success";
     }
+    if (response.status === 401) {
+        window.location = '/templates/login.html';
+    }
+
+
 })
