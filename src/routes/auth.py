@@ -86,6 +86,7 @@ async def signup(
     bt.add_task(send_email, new_user.email, new_user.username, str(request.base_url))
     return new_user
 
+
 @router.post("/login", response_model=TokenSchema)
 async def login(
     body: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)
@@ -127,13 +128,36 @@ async def login(
         "refresh_token": refresh_token,
         "token_type": "bearer",
     }
+
+
 async def add_token_to_blacklist(token: str, db: AsyncSession):
+    """
+    Adds a token to the blacklist, effectively deactivating it.
+
+    Args:
+        token (str): The token to be added to the blacklist.
+        db (AsyncSession): The database session.
+
+    Returns:
+        None
+    """
     db.add(Blacklist(token=token))
     await db.commit()
 
 async def is_token_blacklisted(token: str, db: AsyncSession) -> bool:
+    """
+    Checks if a given token is present in the blacklist.
+
+    Args:
+        token (str): The token to check.
+        db (AsyncSession): The database session.
+
+    Returns:
+        bool: True if the token is blacklisted, False otherwise.
+    """
     result = await db.execute(select(Blacklist).filter(Blacklist.token == token))
     return result.scalar_one_or_none() is not None
+
 
 @router.post("/logout", status_code=status.HTTP_200_OK)
 async def logout(
@@ -145,6 +169,7 @@ async def logout(
     """
     await add_token_to_blacklist(token, db)
     return {"message": "Successfully logged out"}
+
 
 @router.get("/refresh_token", response_model=TokenSchema)
 async def refresh_token(

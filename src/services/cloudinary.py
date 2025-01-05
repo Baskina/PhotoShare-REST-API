@@ -21,7 +21,19 @@ cloudinary.config(
 )
 
 
-async def upload_image_to_cloudinary(file: UploadFile):
+async def upload_image_to_cloudinary(file: UploadFile) -> tuple[str, str]:
+    """
+    Uploads the given image file to Cloudinary and returns the image URL and public ID.
+
+    Args:
+        file (UploadFile): The image file to upload.
+
+    Returns:
+        Tuple[str, str]: A tuple containing the image URL and public ID.
+
+    Raises:
+        HTTPException: If the file type is not supported.
+    """
     try:
         if file.content_type not in ["image/jpeg", "image/png"]:
             raise HTTPException(status_code=400, detail="Invalid file type. Only JPEG and PNG are allowed.")
@@ -52,9 +64,21 @@ async def upload_image_to_cloudinary(file: UploadFile):
         raise HTTPException(status_code=400, detail=f"Error uploading image: {str(e)}")
 
 
-def generate_transformed_image_url(public_id: str, transformations: dict):
-    try:
+def generate_transformed_image_url(public_id: str, transformations: dict) -> str:
+    """
+    Generates a transformed image URL for a given public ID and transformation settings.
 
+    Args:
+        public_id (str): The public ID of the image in Cloudinary.
+        transformations (dict): A dictionary of transformation options to apply to the image.
+
+    Returns:
+        str: The transformed image URL.
+
+    Raises:
+        HTTPException: If an error occurs while generating the transformed URL.
+    """
+    try:
         url = cloudinary.utils.cloudinary_url(public_id, **transformations)[0]
         logger.debug(f"Generated transformed URL: {url}")
         return url
@@ -64,6 +88,18 @@ def generate_transformed_image_url(public_id: str, transformations: dict):
 
 
 async def upload_qr_to_cloudinary(link_url):
+    """
+    Uploads a QR code generated from the given link URL to Cloudinary.
+
+    Args:
+        link_url (str): The URL to encode in the QR code.
+
+    Returns:
+        str: The URL of the uploaded QR code image in Cloudinary.
+
+    Raises:
+        HTTPException: If an error occurs during the QR code generation or upload.
+    """
     try:
         timestamp = int(time.time())
 
@@ -77,7 +113,7 @@ async def upload_qr_to_cloudinary(link_url):
         qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
         qr.add_data(link_url)
         qr.make(fit=True)
-        # Convert QR code to a byte stream
+
         img = qr.make_image(fill="black", back_color="white")
         img_byte_arr = BytesIO()
         img.save(img_byte_arr)
