@@ -60,13 +60,14 @@ async def create_photo(
                - tags (List[str]): A list of tags associated with the photo.
                - image (str): The URL of the uploaded image in Cloudinary.
        """
+    print('aloo', file)
     tags = tags[0].split(",") if isinstance(tags, list) else tags.split(",")
 
     if len(tags) > 5:
         raise HTTPException(status_code=400, detail="You can add up to 5 tags.")
 
     tags = list(set(tags))
-
+    print('file', file)
     image_url, public_id = await upload_image_to_cloudinary(file)
 
     new_photo = Photo(
@@ -417,7 +418,7 @@ async def transform_photo(
 )
 async def rate_photo(
         photo_id: int = Path(ge=1, description="The ID of the photo to rate"),
-        like_value: int = Query(ge=1, le=5, description="The value to rate the photo with"),
+        like_value: int = Query(None), #ge=1, le=5, description="The value to rate the photo with" - ! Це хак, щоб запрацював фронт
         db: AsyncSession = Depends(get_db),
         current_user: User = Depends(auth_service.get_current_user),
 ):
