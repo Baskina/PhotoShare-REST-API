@@ -418,7 +418,7 @@ async def transform_photo(
 )
 async def rate_photo(
         photo_id: int = Path(ge=1, description="The ID of the photo to rate"),
-        like_value: int = Query(ge=1, le=5, description="The value to rate the photo with"),
+        like_value: int = Query(None), #ge=1, le=5, description="The value to rate the photo with" - ! Це хак, щоб запрацював фронт
         db: AsyncSession = Depends(get_db),
         current_user: User = Depends(auth_service.get_current_user),
 ):

@@ -20,10 +20,9 @@ const getInfoUser = async () => {
     redirect: 'follow'
   };
 
-  const respons = await fetch(`${baseUrl}/api/users/${username}`, requestOptions)
-    if (respons.status === 200) {
-      const result = await respons.json()
-      console.log(result);
+  const response = await fetch(`${baseUrl}/api/users/${username}`, requestOptions)
+    if (response.status === 200) {
+      const result = await response.json()
       aboutUser.innerHTML = ""
       const img = document.createElement('img');
       img.src = result.avatar;
@@ -31,7 +30,7 @@ const getInfoUser = async () => {
       avatar.src = result.avatar;
       avatar.style.borderRadius = '20%';
       avatar.style.width = '200px';
-      avatar.style.height = 'avto';
+      avatar.style.height = 'auto';
 
 
       const el1 = document.createElement('div')

@@ -1,6 +1,6 @@
 import {baseUrl} from './config.js';
 
-const token = localStorage.getItem("refreshToken")
+const token = localStorage.getItem("accessToken");
 
 if (!token) {
     window.location.href = "/templates/login.html";
@@ -18,7 +18,7 @@ if (message) {
   const returnAnswerDiv2 = document.createElement('div')
   returnAnswerDiv2.className = "modal-content rounded-4 shadow mb-2 mt-2"
   const returnAnswerDiv1 = document.createElement('div')
-  returnAnswerDiv1.className = "col-md-12 py-2 align-items-centerv"
+  returnAnswerDiv1.className = "col-md-12 py-2 align-items-center"
   const returnAnswerP = document.createElement('p')
   returnAnswerP.textContent = message;
   returnAnswerDiv1.appendChild(returnAnswerP)
@@ -39,7 +39,7 @@ const getUserById = async (user_id) => {
     redirect: 'follow'
   };
 
-  const response = await fetch(`${baseUrl}/api/users/users_id/${user_id}`, requestOptions)
+  const response = await fetch(`${baseUrl}/api/users/${user_id}`, requestOptions)
   if (response.status === 200) {
     const result = await response.json()
     return result;
@@ -122,7 +122,7 @@ const getImage = async (photo_id) => {
   const response = await fetch(`${baseUrl}/api/photos/${photo_id}`, requestOptions)
 
   if (response.status === 200) {
-    window.location = `/templates/image.html/${photo_id}`;
+    window.location = `/templates/image.html?id=${photo_id}`;
   }
 };
 
@@ -139,14 +139,13 @@ const getImages = async () => {
   };
 
 
-  const response = await fetch(`${baseUrl}/api/photos`, requestOptions)
+  const response = await fetch(`${baseUrl}/api/photos/search`, requestOptions)
   if (response.status === 200) {
     const result = await response.json()
     images.innerHTML = ""
     for (const image of result) {
-      console.log('image', image)
       const img = document.createElement('img');
-      img.src = image?.url;
+      img.src = image?.image;
       const user = image?.user_id ? await getUserById(image?.user_id) : null;
 
       const avatar = document.createElement('img');
@@ -156,10 +155,10 @@ const getImages = async () => {
       avatar.style.height = '30px';
 
       const el = document.createElement('div');
-      el.className = 'modal-content rounded-2 shadow link-style';
+      el.className = 'card-content rounded-2 shadow link-style';
 
       el.addEventListener('click', () => {
-        window.location = `/templates/image.html/${image?.url}`
+        window.location = `/templates/image.html?id=${image?.id}`
       });
 
       const avatarUserNameDiv = document.createElement('div');
@@ -179,27 +178,30 @@ const getImages = async () => {
       const photoLink = document.createElement('a');
       photoLink.className = 'photo';      
       photoLink.innerHTML = img.outerHTML;
-      photoLink.style.width = '200px';
+      // photoLink.style.width = '200px';
       photoDiv.appendChild(photoLink);
 
       const imagesDescriptionDiv = document.createElement('div');
       imagesDescriptionDiv.className = "some_class mb-2"
       const descriptionSpan = document.createElement('span');
-      descriptionSpan.textContent = image.description;
+      descriptionSpan.textContent = `Description: ${image.description}`;
       imagesDescriptionDiv.appendChild(descriptionSpan)
 
       const imageRatingDiv = document.createElement('div');
       const imageRating = document.createElement('a');
-      const rating = image.avg_rating;
+      const rating = image.rating;
 
       for (let i = 0; i < Math.round(rating); i++) {
         const star = document.createElement('span');
         star.textContent = '★';
-        star.classList.add('star');
+        star.classList.add('star-small');
         imageRating.appendChild(star);
       }
-
-      imageRatingDiv.textContent = `Rating: ${rating}`;
+      let unrated = ''
+      if (rating === null) {
+        unrated = ' unrated'
+      }
+      imageRatingDiv.textContent = `Rating: ${unrated}`;
       imageRatingDiv.appendChild(imageRating);
       imagesDescriptionDiv.appendChild(imageRatingDiv);
 

@@ -155,14 +155,10 @@ body {
       position: relative;
       color: #666666;
       padding-left: 40px;
-      text-shadow: 8px 8px 8px rgba(0, 0, 0, 0.25)
    }
    
    .author:hover {
-      color: #FFFF99;
-      -webkit-text-stroke: 0.4px black;
-      text-stroke: 1px black;
-      text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.5)
+      color: blue;
    }
    
    .modal-content {
@@ -4619,10 +4615,8 @@ body {
      display: -webkit-box;
      display: -ms-flexbox;
      display: flex;
-     -webkit-box-orient: vertical;
-     -webkit-box-direction: normal;
-     -ms-flex-direction: column;
-     flex-direction: column;
+       flex-direction: row;
+     flex-wrap: wrap;
      padding-left: 0;
      margin-bottom: 0; }
    
@@ -4758,6 +4752,7 @@ body {
            border-bottom-left-radius: 0; } }
    
    .list-group-flush .list-group-item {
+     padding: 20px;
      border-right: 0;
      border-left: 0;
      border-radius: 0; }
@@ -4770,7 +4765,18 @@ body {
    .list-group-flush:last-child .list-group-item:last-child {
      margin-bottom: 0;
      border-bottom: 0; }
-   
+
+   .list-group-flush .card-content img {
+        width: 100%;
+        margin-bottom: 10px;
+   }
+
+    .list-group-flush .author {
+        align-self: flex-end;
+        margin-bottom: 10px;
+    }
+
+   .list-group-item {}
    .list-group-item-primary {
      color: #004085;
      background-color: #b8daff; }
@@ -4969,7 +4975,7 @@ body {
      display: -ms-flexbox;
      display: flex;
      max-height: calc(100% - 1rem); }
-     .modal-dialog-scrollable .modal-content {
+     .modal-dialog-scrollable .card-content {
        max-height: calc(100vh - 1rem);
        overflow: hidden; }
      .modal-dialog-scrollable .modal-header,
@@ -5000,13 +5006,16 @@ body {
        -ms-flex-pack: center;
        justify-content: center;
        height: 100%; }
-       .modal-dialog-centered.modal-dialog-scrollable .modal-content {
+       .modal-dialog-centered.modal-dialog-scrollable .card-content {
          max-height: none; }
        .modal-dialog-centered.modal-dialog-scrollable::before {
          content: none; }
-   
-   .modal-content {
+
+   .card-content {
+       max-width: 300px;
      position: relative;
+     padding: 20px;
+     margin: 20px;
      display: -webkit-box;
      display: -ms-flexbox;
      display: flex;
@@ -8861,5 +8870,38 @@ body {
       .link-style {
           cursor: pointer;
       }
-      
-   
+
+.rating-container {
+    max-width: 33rem;
+    background: #fff;
+    margin: 0 1rem;
+    padding: 1rem;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    border-radius: 0.5rem;
+}
+
+.star {
+    font-size: 5vh;
+    cursor: pointer;
+}
+
+.one {
+    color: rgb(255, 0, 0);
+}
+
+.two {
+    color: rgb(255, 106, 0);
+}
+
+.three {
+    color: rgb(251, 255, 120);
+}
+
+.four {
+    color: rgb(255, 255, 0);
+}
+
+.five {
+    color: rgb(24, 159, 14);
+}
