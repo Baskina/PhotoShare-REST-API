@@ -1,0 +1,158 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <title>Login</title>
+    <link href="/css/style.css" rel="stylesheet">
+<script>
+    (function($) {
+
+        var methods = {
+            init: function(opts) {
+                opts = opts || {};
+                opts.tags = opts.tags || [];
+
+                var me = $(this);
+                var clean = new RegExp(',', 'g');
+                me.wrap('<div class="tag-cloud" />');
+                var cloud = me.parents('.tag-cloud');
+
+                cloud.click(function() {
+                    me.focus();
+                });
+
+                var addTag = function(value) {
+                    value = value.replace(clean, '');
+                    if (value !== '') {
+                        var tag = $('<div class="tag"><span>' + value + '</span></div>');
+                        var del = $('<a href="#" class="close">Delete</a>');
+
+                        del.click(function() {
+                            del.parent().remove();
+                        });
+
+                        tag.append(del);
+                        tag.insertBefore(me);
+                    }
+                }
+
+                me.blur(function() {
+                    addTag(this.value);
+                    this.value = '';
+                });
+                me.keyup(function(e) {
+                    var key = e.keyCode;
+                    var isEnter = key == 13;
+                    var isComma = key == 32;
+                    var isBack = key == 8;
+
+                    if (isEnter || isComma) {
+                        addTag(this.value);
+                        this.value = '';
+                    }
+                    if (isBack && this.data('delete-prev')) {
+                        $(this).prev().remove();
+                        $(this).data('delete-prev',false);
+                    } else if(isBack && this.value === '') {
+                        $(this).data('delete-prev', true);
+
+                    }
+                });
+                $.each(opts.tags, function(i, e) {
+                    addTag(e);
+                });
+            },
+            get: function() {
+                return $('.tag span',this.parent()).map(function() {
+                    return $(this).text();
+                });
+            },
+            clear: function() {
+                $('div', this).remove();
+            }
+        };
+        $.fn.tagcloud = function(method) {
+            if (methods[method]) {
+                return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+            } else if (typeof method === 'object' || !method) {
+                return methods.init.apply(this, arguments);
+            } else {
+                $.error('Method ' + method + ' does not exist on tagcloud plugin');
+            }
+        };
+    })(jQuery);
+
+    $('.tags').tagcloud({
+        tags: ['Quint', 'USS Indianapolis', 'Orca']
+
+    });
+    var tags = $('.tags').tagcloud('get');
+
+
+
+</script>
+
+</head>
+
+<body class="text-center">
+
+
+        <div class="container">
+            <header class="d-flex flex-wrap justify-content-between align-items-left py-3 my-4 border-bottom">
+                <ul class="nav col-md-4 justify-content-between">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link px-2 text-body-secondary">Home</a>
+                    </li>
+                    <div>
+
+                        <li class="nav-item">
+                            <a class="nav-link px-2" id="logout">Logout</a>
+                        </li>
+                    </div>
+
+                </ul>
+            </header>
+
+
+    </div>
+
+        <div class="container">
+            <form>
+
+                <div class="form-floating mb-2">
+                    <input type="text" class="form-control bg-transparent border-color-primary" name="description" id="description" placeholder="description">
+                    <label for="description">Description</label>
+                </div>
+                <div class="form-floating">
+                    <label for="text_tags">Tags</label>
+                    <input type="text" id="text_tags" class="form-control bg-transparent border-color-primary tags" name="tags" />
+                </div>
+                <div class="form-floating mb-2">
+                    <label for="file">Select file</label>
+                    <input type="file" id='file' class="form-control bg-transparent border-color-primary" name="file">
+                </div>
+
+                <button class="w-100 btn-lg bg-primary mb-2 border-1 border-color-primary" type="submit">Add Image</button>
+            </form>
+        </div>
+
+    <div class="px-4 pt-2 my-5 text-center border-bottom" id="about_user">
+
+    </div>
+        <div id="user_images"></div>
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <p class="col-md-4 mb-0 text-body-secondary">&copy; 2025 Digital workspace</p>
+    </footer>
+<!--    <script src="/javascript/user_profile.js" type="module"></script>-->
+        <script src="/javascript/add_image.js" type="module"></script>
+        <script src="/javascript/logout.js" type="module"></script>
+</body>
+
+</html>

@@ -27,6 +27,27 @@ async def get_user_by_email(email: str, db: AsyncSession = Depends(get_db)):
     user = user.scalar_one_or_none()
     return user
 
+async def get_user_by_id(user_id: str, session: AsyncSession):
+    query = select(User).where(User.id == user_id)
+
+    user = await session.execute(query)
+
+    user = user.scalar_one_or_none()
+    return user
+
+async def count_users(db: AsyncSession) -> int:
+    """
+    Returns the number of users in the database.
+
+    Args:
+        db (AsyncSession): The database session.
+
+    Returns:
+        int: The number of users in the database.
+    """
+    stmt = select(User.id)
+    result = await db.execute(stmt)
+    return len(result.all()) 
 
 async def create_user(body: UserValidationSchema, db: AsyncSession = Depends(get_db)):
     """

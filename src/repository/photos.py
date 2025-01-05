@@ -1,13 +1,15 @@
 import datetime
 from typing import Tuple, Any, List
 
+import qrcode
 from fastapi import HTTPException
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import or_
 
-from src.entity.models import Photo, User, photo_tag_association, Tag, Like
+from src.entity.models import Photo, User, photo_tag_association, Tag, Like, PhotoTransfer
+from src.services import cloudinary
 from src.services.rating_calculation import rating_calculation
 
 
@@ -255,9 +257,9 @@ async def view_rating_photo(photo_id: int, db: AsyncSession) -> list[dict]:
         .where(Photo.id == photo_id)
     )
     result = await db.execute(stmt)
-    if not result:
-        raise HTTPException(status_code=404, detail="Photo not found")
     photos_rating = [dict(row) for row in result.mappings().all()]
+    if not photos_rating:
+        raise HTTPException(status_code=404, detail="Photo not found")
     return photos_rating
 
 
@@ -285,3 +287,62 @@ async def delete_like_of_photo(like_id: int, db: AsyncSession) -> Photo | None:
     await db.commit()
 
     return await rating_calculation(photo_id, db)
+
+
+async def save_transform_photo(photo_id: int, image: str, transformed_url: str,
+                               db: AsyncSession) -> PhotoTransfer | None:
+    """
+    Saves a transformed photo to the database.
+
+    This function creates a new entry in the `PhotoTransfer` table, associating
+    the transformed photo with the original photo and storing the transformed image URL.
+
+    Args:
+        photo_id (int): The ID of the original photo associated with the transformation.
+        image (str): The URL or path of the transformed image.
+        transformed_url (str): The URL of the transformed image.
+        db (AsyncSession): The database session used for database operations.
+
+    Returns:
+        PhotoTransfer | None: The created `PhotoTransfer` record if successful, otherwise None.
+
+    Raises:
+        HTTPException: If there is an issue with the database operation.
+    """
+    photo_transfer = PhotoTransfer(
+        image=image,
+        link_url=transformed_url,
+        photo_id=photo_id,
+    )
+    db.add(photo_transfer)
+    await db.commit()
+
+    return photo_transfer
+
+
+async def generate_and_save_qr(photo_transfer: PhotoTransfer, qr_url: str, db: AsyncSession) -> PhotoTransfer | None:
+    """
+    Generates a QR code URL for a transformed photo's link and saves it to the database.
+
+    This function generates a QR code URL for the `link_url` of a `PhotoTransfer` record
+    and saves it in the `link_qr` field.
+
+    Args:
+        qr_url: The base URL of the QR code
+        photo_transfer (PhotoTransfer): The ID of the `PhotoTransfer` record to update.
+        base_url (str): The base URL of the server where the QR code will be hosted.
+        db (AsyncSession): The database session used for database operations.
+
+    Returns:
+        PhotoTransfer | None: The updated `PhotoTransfer` record if successful, otherwise None.
+
+    Raises:
+        HTTPException: If the `PhotoTransfer` record with the given ID is not found.
+    """
+
+    photo_transfer.link_qr = qr_url
+    db.add(photo_transfer)
+    await db.commit()
+    await db.refresh(photo_transfer)
+
+    return photo_transfer

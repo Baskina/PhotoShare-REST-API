@@ -2,8 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 from src.database.db import get_db
+from src.entity.models import User
 from src.schemas.comments import CommentCreate, CommentResponse, CommentUpdate
 from src.repository.comments import create_comment, get_comments_by_photo, update_comment, delete_comment
+from src.services.auth import auth_service
+from src.services.role import roles_required
 
 router = APIRouter(prefix="/comments", tags=["Comments"])
 
@@ -43,9 +46,11 @@ async def edit_comment(
         raise HTTPException(status_code=403, detail=str(e))
 
 @router.delete("/{comment_id}")
+@roles_required(["admin", "moderator"])
 async def remove_comment(
     comment_id: int,
-    session: AsyncSession = Depends(get_db)
+    session: AsyncSession = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user)
 ):
     """
     Deletes a comment (only for administrator or moderator).
