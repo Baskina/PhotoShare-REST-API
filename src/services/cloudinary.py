@@ -73,9 +73,11 @@ def generate_transformed_image_url(public_id: str, transformations: dict):
 
     Returns:
         str: A Cloudinary URL with the given transformations.
+
+    Raises:
+        HTTPException: If an error occurs while generating the transformed URL.
     """
     try:
-
         url = cloudinary.utils.cloudinary_url(public_id, **transformations)[0]
         logger.debug(f"Generated transformed URL: {url}")
         return url
@@ -85,6 +87,18 @@ def generate_transformed_image_url(public_id: str, transformations: dict):
 
 
 async def upload_qr_to_cloudinary(link_url):
+    """
+    Uploads a QR code generated from the given link URL to Cloudinary.
+
+    Args:
+        link_url (str): The URL to encode in the QR code.
+
+    Returns:
+        str: The URL of the uploaded QR code image in Cloudinary.
+
+    Raises:
+        HTTPException: If an error occurs during the QR code generation or upload.
+    """
     try:
         timestamp = int(time.time())
 
@@ -98,7 +112,7 @@ async def upload_qr_to_cloudinary(link_url):
         qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
         qr.add_data(link_url)
         qr.make(fit=True)
-        # Convert QR code to a byte stream
+
         img = qr.make_image(fill="black", back_color="white")
         img_byte_arr = BytesIO()
         img.save(img_byte_arr)

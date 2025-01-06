@@ -1,13 +1,18 @@
+# Configuration file for the Sphinx documentation builder.
+#
+# For the full list of built-in configuration values, see the documentation:
+# https://www.sphinx-doc.org/en/master/usage/configuration.html
+
+# -- Project information -----------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 import sys
 import os
 
-# sys.path.append(os.path.abspath('..'))
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.append(os.path.abspath('..'))
 
-
-project = 'Contact book project'
-copyright = '2024, Baskina'
-author = 'Baskina'
+project = 'PhotoShare-REST-API'
+copyright = '2025, Andreshizap'
+author = 'Command "Digital workspace"'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
