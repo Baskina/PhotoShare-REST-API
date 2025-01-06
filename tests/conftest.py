@@ -1,14 +1,20 @@
 import asyncio
+from unittest.mock import MagicMock
 
 import pytest
 from fastapi.testclient import TestClient
+from fastapi_limiter import FastAPILimiter
 from sqlalchemy.pool import StaticPool
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+
+import logging
 
 from main import app
 from src.entity.models import Base, User
 from src.database.db import get_db
 from src.services.auth import auth_service
+
+logging.getLogger().setLevel(logging.CRITICAL)
 
 SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///./test.db"
 
@@ -32,7 +38,8 @@ def init_models_wrap():
             current_user = User(username=test_user["username"],
                                 email=test_user["email"],
                                 hash=hash_password,
-                                confirmed=True)
+                                confirmed=True,
+                                role="user")
             session.add(current_user)
             await session.commit()
 
@@ -50,9 +57,25 @@ def client():
         except Exception as error:
             print(error)
             await session.rollback()
+            raise
         finally:
             await session.close()
 
     app.dependency_overrides[get_db] = override_get_db
 
     yield TestClient(app)
+
+
+@pytest.fixture(scope="module", autouse=True)
+async def init_limiter():
+    # mock_redis = redis.from_url("redis://localhost:6379", decode_responses=True)
+    mock_redis = MagicMock()
+    await FastAPILimiter.init(mock_redis)
+
+    yield
+
+
+@pytest.fixture()
+async def get_token():
+    token = await auth_service.create_access_token(data={"sub": test_user["email"]})
+    return token

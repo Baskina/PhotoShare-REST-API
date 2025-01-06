@@ -2,17 +2,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from src.entity.models import Comment
 
-async def create_comment(session: AsyncSession, text: str, user_id: int, photo_id: int) -> Comment:
-    """Creates a new comment in the database.
+
+async def create_comment(session: AsyncSession, text: str, user_id: int, photo_id: int):
+    """
+    Creates a new comment in the database.
 
     Args:
         session (AsyncSession): The database session.
-        text (str): The text of the comment.
-        user_id (int): The ID of the user who made the comment.
-        photo_id (int): The ID of the photo the comment is about.
+        text (str): The text content of the comment.
+        user_id (int): The ID of the user creating the comment.
+        photo_id (int): The ID of the photo the comment is associated with.
 
     Returns:
-        Comment: The newly created comment.
+        Comment: The newly created comment object.
     """
     new_comment = Comment(text=text, user_id=user_id, photo_id=photo_id)
     session.add(new_comment)
@@ -20,22 +22,25 @@ async def create_comment(session: AsyncSession, text: str, user_id: int, photo_i
     await session.refresh(new_comment)
     return new_comment
 
-async def get_comments_by_photo(session: AsyncSession, photo_id: int) -> list[Comment]:
-    """Gets all comments for the specified photo.
+
+async def get_comments_by_photo(session: AsyncSession, photo_id: int):
+    """
+    Retrieves a list of comments associated with a specific photo.
 
     Args:
         session (AsyncSession): The database session.
         photo_id (int): The ID of the photo for which to retrieve comments.
 
     Returns:
-        list[Comment]: A list of comments for the specified photo.
+        List[Comment]: A list of comments associated with the specified photo.
     """
     query = select(Comment).where(Comment.photo_id == photo_id)
     result = await session.execute(query)
     return result.scalars().all()
 
 async def update_comment(session: AsyncSession, comment_id: int, new_text: str, user_id: int) -> Comment:
-    """Updates the text of a comment if the user is the owner.
+    """
+    Updates the text of a comment in the database if the user is the owner of the comment.
 
     Args:
         session (AsyncSession): The database session.
@@ -44,7 +49,7 @@ async def update_comment(session: AsyncSession, comment_id: int, new_text: str, 
         user_id (int): The ID of the user attempting to update the comment.
 
     Returns:
-        Comment: The updated comment.
+        Comment: The updated comment object.
 
     Raises:
         PermissionError: If the user is not the owner of the comment.
@@ -58,8 +63,10 @@ async def update_comment(session: AsyncSession, comment_id: int, new_text: str, 
     await session.refresh(comment)
     return comment
 
-async def delete_comment(session: AsyncSession, comment_id: int):
-    """Deletes a comment from the database.
+
+async def delete_comment(session: AsyncSession, comment_id: int) -> None:
+    """
+    Deletes a comment in the database.
 
     Args:
         session (AsyncSession): The database session.

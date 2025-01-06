@@ -257,9 +257,9 @@ async def view_rating_photo(photo_id: int, db: AsyncSession) -> list[dict]:
         .where(Photo.id == photo_id)
     )
     result = await db.execute(stmt)
-    if not result:
-        raise HTTPException(status_code=404, detail="Photo not found")
     photos_rating = [dict(row) for row in result.mappings().all()]
+    if not photos_rating:
+        raise HTTPException(status_code=404, detail="Photo not found")
     return photos_rating
 
 

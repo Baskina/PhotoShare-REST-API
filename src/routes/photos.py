@@ -66,7 +66,6 @@ async def create_photo(
         raise HTTPException(status_code=400, detail="You can add up to 5 tags.")
 
     tags = list(set(tags))
-
     image_url, public_id = await upload_image_to_cloudinary(file)
 
     new_photo = Photo(
@@ -155,7 +154,7 @@ async def search_photos(
     summary="Retrieve all photos by user ID",
     description="Gets all photos from the database by user ID",
 )
-@roles_required(["admin", "moderator"])
+
 async def search_photos_by_user(
         limit: int = Query(default=10, ge=0, le=50, description="The maximum number of photos to return"),
         offset: int = Query(default=0, ge=0, description="The offset from which to start returning photos"),

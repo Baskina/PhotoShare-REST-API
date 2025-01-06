@@ -20,19 +20,18 @@ cloudinary.config(
     api_secret=config.CLD_API_SECRET,
 )
 
-
 async def upload_image_to_cloudinary(file: UploadFile) -> tuple[str, str]:
     """
-    Uploads the given image file to Cloudinary and returns the image URL and public ID.
+    Uploads the given image file to Cloudinary and returns the uploaded image URL and public ID.
 
     Args:
-        file (UploadFile): The image file to upload.
+        file: The image file to upload.
 
     Returns:
-        Tuple[str, str]: A tuple containing the image URL and public ID.
+        A tuple containing the uploaded image URL and public ID.
 
     Raises:
-        HTTPException: If the file type is not supported.
+        HTTPException: If the file type is invalid or there is an error with the upload.
     """
     try:
         if file.content_type not in ["image/jpeg", "image/png"]:
@@ -64,16 +63,16 @@ async def upload_image_to_cloudinary(file: UploadFile) -> tuple[str, str]:
         raise HTTPException(status_code=400, detail=f"Error uploading image: {str(e)}")
 
 
-def generate_transformed_image_url(public_id: str, transformations: dict) -> str:
+def generate_transformed_image_url(public_id: str, transformations: dict):
     """
-    Generates a transformed image URL for a given public ID and transformation settings.
+    Generates a Cloudinary URL with the given transformations.
 
     Args:
-        public_id (str): The public ID of the image in Cloudinary.
-        transformations (dict): A dictionary of transformation options to apply to the image.
+        public_id (str): The public ID of the image.
+        transformations (dict): A dictionary of transformations to apply.
 
     Returns:
-        str: The transformed image URL.
+        str: A Cloudinary URL with the given transformations.
 
     Raises:
         HTTPException: If an error occurs while generating the transformed URL.
