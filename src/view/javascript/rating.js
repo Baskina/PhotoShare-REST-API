@@ -47,7 +47,7 @@ const press_rating = async (n) => {
     }
     remove();
     for (let i = 0; i < n; i++) {
-        let cls =''
+        let cls = ''
         if (n == 1) cls = "one";
         else if (n == 2) cls = "two";
         else if (n == 3) cls = "three";
@@ -61,7 +61,6 @@ const press_rating = async (n) => {
     myHeaders.append(
         "Authorization",
         `Bearer ${token}`);
-
 
 
     const requestOptions = {

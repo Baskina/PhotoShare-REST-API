@@ -1,79 +1,140 @@
-.. Contact book project documentation master file, created by
-   sphinx-quickstart on Fri Nov  1 20:16:49 2024.
+.. PhotoShare-REST-API documentation master file, created by
+   sphinx-quickstart on Sun Jan  5 15:39:10 2025.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Contact book project documentation
-==================================
-
+PhotoShare-REST-API documentation
+=================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
 
-REST API main
-=============
+PhotoShare-REST-API main
+========================
 .. automodule:: main
   :members:
   :undoc-members:
   :show-inheritance:
 
 
-REST API repository Contacts
-============================
-.. automodule:: src.repository.contacts
+PhotoShare-REST-API repository Photos
+=====================================
+.. automodule:: src.repository.photos
   :members:
   :undoc-members:
   :show-inheritance:
 
 
-REST API repository Users
-=========================
+PhotoShare-REST-API repository Comments
+=======================================
+.. automodule:: src.repository.comments
+  :members:
+  :undoc-members:
+  :show-inheritance:
+
+
+PhotoShare-REST-API repository Users
+====================================
 .. automodule:: src.repository.users
   :members:
   :undoc-members:
   :show-inheritance:
 
 
-REST API routes Contacts
-========================
-.. automodule:: src.routes.contacts
+
+PhotoShare-REST-API routes Photos
+=================================
+.. automodule:: src.routes.photos
   :members:
   :undoc-members:
   :show-inheritance:
 
 
-REST API routes Users
-=====================
+PhotoShare-REST-API routes Comments
+===================================
+.. automodule:: src.routes.comments
+  :members:
+  :undoc-members:
+  :show-inheritance:
+
+
+PhotoShare-REST-API routes Users
+================================
 .. automodule:: src.routes.users
   :members:
   :undoc-members:
   :show-inheritance:
 
 
-REST API routes Auth
-====================
+PhotoShare-REST-API routes Auth
+===============================
 .. automodule:: src.routes.auth
   :members:
   :undoc-members:
   :show-inheritance:
 
 
-REST API service Auth
-=====================
+PhotoShare-REST-API routes Tag
+==============================
+.. automodule:: src.routes.tag
+  :members:
+  :undoc-members:
+  :show-inheritance:
+
+
+PhotoShare-REST-API service Auth
+================================
 .. automodule:: src.services.auth
   :members:
   :undoc-members:
   :show-inheritance:
 
 
-REST API service Email
-======================
+PhotoShare-REST-API service Email
+=================================
 .. automodule:: src.services.email
   :members:
   :undoc-members:
   :show-inheritance:
 
 
+PhotoShare-REST-API service Cloudinary
+======================================
+.. automodule:: src.services.cloudinary
+  :members:
+  :undoc-members:
+  :show-inheritance:
 
+
+PhotoShare-REST-API service Rating
+==================================
+.. automodule:: src.services.rating_calculation
+  :members:
+  :undoc-members:
+  :show-inheritance:
+
+
+PhotoShare-REST-API service role
+================================
+.. automodule:: src.services.role
+  :members:
+  :undoc-members:
+  :show-inheritance:
+
+
+PhotoShare-REST-API service Middlewares
+=======================================
+.. automodule:: src.services.middlewares
+  :members:
+  :undoc-members:
+  :show-inheritance:
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

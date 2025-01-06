@@ -10,7 +10,7 @@ if (!token) {
 
 const message = document.getElementById("message");
 
-form.addEventListener("submit", async(e) => {
+form.addEventListener("submit", async (e) => {
     e.preventDefault()
     const description = form.description.value
     const tags = form.tags.value.split(" ");
@@ -39,7 +39,7 @@ form.addEventListener("submit", async(e) => {
 
     if (response.status == 200) {
         message.textContent = "Image uploaded successfully";
-        message.className ="text-success";
+        message.className = "text-success";
     }
     if (response.status === 401) {
         window.location = '/templates/login.html';
