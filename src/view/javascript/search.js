@@ -1,3 +1,5 @@
+console.log('NOT IN USE')
+
 import {baseUrl} from './config.js';
 
 
@@ -94,7 +96,7 @@ const getSearch = async () => {
                 const usercreateLi = document.createElement("li");
                 console.log(user.created_at);
                 const createdAt = new Date(user.created_at);
-                const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+                const dateOptions = {year: 'numeric', month: 'long', day: 'numeric'};
                 const formattedDate = createdAt.toLocaleDateString(undefined, dateOptions);
 
                 //usercreateLi.textContent = `Created at: ${formattedDate}`;
@@ -109,7 +111,7 @@ const getSearch = async () => {
                 aboutUserDdiv.appendChild(userInfoUl)
                 el2.appendChild(avatarDiv)
                 el2.appendChild(aboutUserDdiv)
-                
+
                 el.appendChild(el2)
                 usersInfo.appendChild(el)
             }

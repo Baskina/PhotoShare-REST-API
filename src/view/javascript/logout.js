@@ -3,6 +3,7 @@ import {baseUrl} from './config.js';
 
 const logoutBtn = document.getElementById("logout");
 logoutBtn.addEventListener("click", logout);
+
 async function logout() {
     const url = `${baseUrl}/api/auth/logout`;
     const token = localStorage.getItem("accessToken");
