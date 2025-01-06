@@ -17,34 +17,24 @@
 
 </head>
 
-<body>
-
+<body class="background-primary-color">
     <div class="container">
-        <header class="d-flex flex-wrap justify-content-between align-items-left py-3 my-4 border-bottom">
-            <ul class="nav col-md-4 justify-content-between">
+        <header class="pt-3">
+            <ul class="nav nav-tabs justify-content-end border-bottom-light w-100">
                 <li class="nav-item">
-                    <a href="/" class="nav-link px-2 text-body-secondary">Home</a>
+                    <a href="/" class="nav-link nav-link-light px-2 text-body-selected">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/templates/user_profile.html" class="nav-link px-2" id="my_images">My Profile</a>
+                    <a href="/templates/user_profile.html" class="nav-link nav-link-light px-2 text-body-secondary" id="my_images">My Profile</a>
                 </li>
-                <div>
-
-                    <li class="nav-item">
-                        <a class="nav-link px-2" id="logout">Logout</a>
+                    <li class="nav-item ml-auto">
+                        <a class="nav-link nav-link-light px-2 text-body-secondary" id="logout">Logout</a>
                     </li>
-                </div>
-
             </ul>
         </header>
-<!--            <form class="d-flex ml-auto" id="searchForm">-->
-<!--                <input class="form-control me-2" id="search_info" type="search_info" placeholder="Search">-->
-<!--                <button class="btn mb-2 mb-md-0 btn-outline-danger btn-sm" type="submit">Search</button>-->
-<!--            </form>-->
-
     </div>
 
-    <main>
+    <main class="pt-5">
         <div class="container">
             <div class="row mb-3">
                 <div class="themed-grid-col">
@@ -71,11 +61,12 @@
 
     
     </main>
-    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-        <p class="col-md-4 mb-0 text-body-secondary text-center">&copy; 2025 Digital workspace</p>
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top-bright">
+        <p class="w-100 mb-0 text-body-secondary text-center">&copy; 2025 Digital workspace</p>
     </footer>
     <script src="/javascript/images.js" type="module"></script>
     <script src="/javascript/logout.js" type="module"></script>
+    <script src="/javascript/refresh_token.js" type="module"></script>
 </body>
 
 </html>

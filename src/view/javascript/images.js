@@ -151,16 +151,17 @@ const getImages = async () => {
       });
 
       const avatarUserNameDiv = document.createElement('div');
-      avatarUserNameDiv.className = "mb-2 mt-2 flex-row"
+      avatarUserNameDiv.className = "mb-2 mt-2 flex-row ml-auto"
       const avatarSpan = document.createElement('div');
       avatarSpan.innerHTML = avatar.outerHTML;
 
 
       const authorLink = document.createElement('div');
       authorLink.className = 'author';
-      authorLink.textContent = `author: ${user?.username}`;
-      avatarUserNameDiv.appendChild(avatarSpan);
+      authorLink.textContent = `${user?.username}`;
+
       avatarUserNameDiv.appendChild(authorLink);
+      avatarUserNameDiv.appendChild(avatarSpan);
 
       const photoDiv = document.createElement('div');
       const photoLink = document.createElement('a');

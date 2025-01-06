@@ -33,7 +33,7 @@ const getInfoUser = async () => {
       const avatar = document.createElement('img')
       avatar.src = result.avatar;
       avatar.style.borderRadius = '20%';
-      avatar.style.width = '200px';
+      avatar.style.width = '150px';
       avatar.style.height = 'auto';
 
 
@@ -41,17 +41,18 @@ const getInfoUser = async () => {
       el1.className = ""
 
       const el2 = document.createElement('div')
-      el2.className = "row mb-4"
+      el2.className = "mb-4"
+      el2.style.display = "flex";
 
       const avatarDiv = document.createElement('div')
-      avatarDiv.className = "col-lg-3"
+      avatarDiv.className = ""
 
       const avatarSpan = document.createElement('span');
       avatarSpan.innerHTML = avatar.outerHTML;
       avatarDiv.appendChild(avatarSpan)
 
       const aboutUserDiv = document.createElement('div')
-      aboutUserDiv.className = "col-lg-9"
+      aboutUserDiv.className = "col-lg-6 pl-5 text-body-secondary"
 
       const userNameH = document.createElement('h4')
       userNameH.className = "text-left"
@@ -60,15 +61,15 @@ const getInfoUser = async () => {
       aboutUserDiv.appendChild(userNameH)
 
 
-      const userInfoUl = document.createElement("ul");
+      const userInfoUl = document.createElement("div");
 
-      const userEmailLi = document.createElement("li");
+      const userEmailLi = document.createElement("div");
       userEmailLi.textContent = `Email: ${result.email}`;
       userEmailLi.classList.add("text-left");
       userInfoUl.appendChild(userEmailLi)
 
 
-      const userRoleLi = document.createElement("li");
+      const userRoleLi = document.createElement("div");
       userRoleLi.textContent = `Role: ${result.role}`;
       userRoleLi.classList.add("text-left");
       userInfoUl.appendChild(userRoleLi)

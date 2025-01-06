@@ -15,38 +15,39 @@
 
 </head>
 
-<body class="text-center">
-
+<body class="background-secondary-color">
   <div class="container">
+      <ul class="nav nav-tabs justify-content-end border-bottom w-100">
 
-
-      <ul class="nav col-md-4 justify-content-end border-bottom">
-        <li class="nav-item"><a href="login.html" class="nav-link px-2 text-body-secondary">Sign In</a>
+        <li class="nav-item"><a target="_blank" href="https://photoshare-rest-api.koyeb.app/docs" class="nav-link px-2 text-body-secondary">Documentation</a></li>
         </li>
-        <li class="nav-item"><a href="https://svitlogram.fly.dev/docs" class="nav-link px-2 text-body-secondary">Documentation</a></li>
-        </li>
-        <li class="nav-item"><a href="https://github.com/gorandalex/svitlogramm" class="nav-link px-2 text-body-secondary">GitHub</a></li>
+        <li class="nav-item"><a target="_blank" href="https://github.com/Baskina/PhotoShare-REST-API" class="nav-link px-2 text-body-secondary">GitHub</a></li>
         </li>
 
+        <li class="nav-item ml-auto"><a href="login.html" class="nav-link px-2 text-body-secondary">Sign In</a>
+        </li>
       </ul>
   </div>
 
   <div class="px-4 pt-2 my-5 text-center">
     <main class="form-signin w-100 m-auto mb-2">
       <form>
-        <img class="mb-4" src="/static/digital_workspace.webp" alt="" width="200" >
+        <div class="image-container">
+          <img class="mb-4" src="/static/digital_workspace.jpg" alt="" width="250" >
+        </div>
+
         <h1 class="h3 mb-3 fw-normal">Please sign up</h1>
         <div class = "badge d-flexp-1 text-warning-emphasis bg-warning-subtle border mb-4" id="return_message" ></div>
         <div class="form-floating mb-2">
-            <input type="username" class="form-control" name="username" id="floatingInput" placeholder="User name">
+            <input type="username" class="form-control bg-transparent border-color-primary" name="username" id="floatingInput" placeholder="User name">
             <label for="floatingInput">Username</label>
           </div>
         <div class="form-floating mb-2">
-          <input type="email" class="form-control" name="email" id="floatingEmail" placeholder="name@example.com">
+          <input type="email" class="form-control bg-transparent border-color-primary" name="email" id="floatingEmail" placeholder="name@example.com">
           <label for="floatingEmail">Email address</label>
         </div>
         <div class="form-floating ">
-          <input type="password" class="form-control" name="password" id="floatingPassword" placeholder="Password">
+          <input type="password" class="form-control bg-transparent border-color-primary" name="password" id="floatingPassword" placeholder="Password">
           <label for="floatingPassword">Password</label>
         </div>
 
@@ -54,8 +55,8 @@
       </form>
     </main>
   </div>
-  <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-    <p class="col-md-4 mb-0 text-body-secondary">&copy; 2025 Digital workspace</p>
+  <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top-bright">
+    <p class="w-100 mb-0 text-body-secondary text-center">&copy; 2025 Digital workspace</p>
   </footer>
 <script src="/javascript/signup.js" type="module"></script>
 </body>
