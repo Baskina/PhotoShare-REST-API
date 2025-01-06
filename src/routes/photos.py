@@ -60,14 +60,12 @@ async def create_photo(
                - tags (List[str]): A list of tags associated with the photo.
                - image (str): The URL of the uploaded image in Cloudinary.
        """
-    print('aloo', file)
     tags = tags[0].split(",") if isinstance(tags, list) else tags.split(",")
 
     if len(tags) > 5:
         raise HTTPException(status_code=400, detail="You can add up to 5 tags.")
 
     tags = list(set(tags))
-    print('file', file)
     image_url, public_id = await upload_image_to_cloudinary(file)
 
     new_photo = Photo(
@@ -156,7 +154,7 @@ async def search_photos(
     summary="Retrieve all photos by user ID",
     description="Gets all photos from the database by user ID",
 )
-@roles_required(["admin", "moderator"])
+
 async def search_photos_by_user(
         limit: int = Query(default=10, ge=0, le=50, description="The maximum number of photos to return"),
         offset: int = Query(default=0, ge=0, description="The offset from which to start returning photos"),
@@ -418,7 +416,7 @@ async def transform_photo(
 )
 async def rate_photo(
         photo_id: int = Path(ge=1, description="The ID of the photo to rate"),
-        like_value: int = Query(None), #ge=1, le=5, description="The value to rate the photo with" - ! Це хак, щоб запрацював фронт
+        like_value: int = Query(ge=1, le=5, description="The value to rate the photo with"),
         db: AsyncSession = Depends(get_db),
         current_user: User = Depends(auth_service.get_current_user),
 ):

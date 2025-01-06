@@ -49,10 +49,16 @@ form.addEventListener("submit", async(e) => {
     const response = await fetch(
         `${baseUrl}/api/auth/login`, 
         requestOptions);
+    const result = await response.json()
     if (response.status == 200) {
-        const result = await response.json()
         localStorage.setItem("accessToken", result.access_token);
         localStorage.setItem("refreshToken", result.refresh_token);
         window.location = '/templates/index.html'
+    } else {
+        returnMessage.textContent = result.detail || result.message;
+    }
+
+    if (response.status === 401) {
+        window.location = '/templates/login.html';
     }
 })

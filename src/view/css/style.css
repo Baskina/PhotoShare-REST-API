@@ -8873,12 +8873,7 @@ body {
 
 .rating-container {
     max-width: 33rem;
-    background: #fff;
-    margin: 0 1rem;
-    padding: 1rem;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     width: 100%;
-    border-radius: 0.5rem;
 }
 
 .star {
@@ -8886,22 +8881,30 @@ body {
     cursor: pointer;
 }
 
-.one {
-    color: rgb(255, 0, 0);
-}
-
-.two {
+.star-small {
     color: rgb(255, 106, 0);
 }
 
-.three {
+.star[id='star1']:hover, .one {
+    color: rgb(255, 0, 0);
+}
+
+.star[id='star2']:hover, .two {
+    color: rgb(255, 106, 0);
+}
+
+.star[id='star3']:hover, .three {
     color: rgb(251, 255, 120);
 }
 
-.four {
+.star[id='star4']:hover, .four {
     color: rgb(255, 255, 0);
 }
 
-.five {
+.star[id='star5']:hover, .five {
     color: rgb(24, 159, 14);
+}
+
+.flex-row {
+    display: flex;
 }

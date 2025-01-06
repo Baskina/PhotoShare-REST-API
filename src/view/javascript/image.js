@@ -1,3 +1,5 @@
+import {getTags} from "./tag.js";
+
 console.log("Run");
 import {baseUrl} from './config.js';
 
@@ -31,9 +33,13 @@ const getUserById = async (user_id) => {
     redirect: 'follow'
   };
 
-  const response = await fetch(`${baseUrl}/api/users/${user_id}`, requestOptions)
+  const response = await fetch(`${baseUrl}/api/users/${user_id}`, requestOptions);
+  console.log('response', response)
   if (response.status === 200) {
     return await response.json();
+  }
+  if (response.status === 401) {
+    window.location = '/templates/login.html';
   }
 }
 
@@ -57,7 +63,8 @@ const getImage = async (photo_id) => {
     container.innerHTML = ""
       const img = document.createElement('img');
       img.src = image?.image;
-      const user = image?.user_id ? await getUserById(image?.user_id) : null;
+      img.className = 'w-100 mb-5';
+      const user = await getUserById(image?.user_id) ;
 
       const avatar = document.createElement('img');
       avatar.src = user?.avatar;
@@ -66,7 +73,7 @@ const getImage = async (photo_id) => {
       avatar.style.height = '30px';
 
       const el = document.createElement('div');
-      el.className = '';
+      el.className = 'mb-5';
 
       const avatarUserNameDiv = document.createElement('div');
       avatarUserNameDiv.className = "author mb-2 mt-2"
@@ -76,7 +83,7 @@ const getImage = async (photo_id) => {
 
       const photoDiv = document.createElement('div');
       const photoLink = document.createElement('a');
-      photoLink.className = 'photo';      
+      photoLink.className = 'photo';
       photoLink.innerHTML = img.outerHTML;
       photoDiv.appendChild(photoLink);
 
@@ -104,18 +111,18 @@ const getImage = async (photo_id) => {
       imageRatingDiv.appendChild(imageRating);
       imagesDescriptionDiv.appendChild(imageRatingDiv);
 
-      const topicsDiv = document.createElement('div');
-      topicsDiv.className = 'node__topics';
-      topicsDiv.textContent = 'Tags: ';
+    const topicsDiv = document.createElement('div');
+    topicsDiv.textContent = 'Tags: ';
 
-      if(image?.tags) {
-        for (const tag of image.tags) {
-          const tagLink = document.createElement('a');
-          tagLink.className = 'btn mb-2 mb-md-0 btn-outline-danger btn-sm';
-          tagLink.textContent = tag.name;
-          topicsDiv.appendChild(tagLink);
-        }
+    const tags = await getTags(image.id);
+    if(tags) {
+      for (const tag of tags) {
+        const tagLink = document.createElement('span');
+        tagLink.style.color = 'gray';
+        tagLink.textContent = `#${tag.name} `;
+        topicsDiv.appendChild(tagLink);
       }
+    }
 
       imagesDescriptionDiv.appendChild(topicsDiv)
 
@@ -151,6 +158,9 @@ const getCurrentUser = async () => {
     const result = await response.json()
     return result;
   }
+  if (response.status === 401) {
+    window.location = '/templates/login.html';
+  }
 }
 
 form.addEventListener("submit", async(e) => {
@@ -183,6 +193,9 @@ form.addEventListener("submit", async(e) => {
   if (response.status == 200) {
     const result = await response.json()
   }
+  if (response.status === 401) {
+    window.location = '/templates/login.html';
+  }
 });
 
 const getComments = async (photo_id) => {
@@ -201,15 +214,27 @@ const getComments = async (photo_id) => {
   if (response.status === 200) {
     const result = await response.json();
     commentsContainer.innerHTML = "";
-    for (const element of result) {
-      console.log('element', element)
+    if (result.length === 0) {
       const el = document.createElement('div');
-      el.textContent = element.text;
-
+      el.textContent = 'No comments yet';
+      el.className = 'mb-4'
       commentsContainer.appendChild(el)
     }
+    for (const element of result) {
+      const el = document.createElement('div');
+      const time = document.createElement('span');
+      const comment = document.createElement('p');
+      time.textContent = element.created_at;
+      time.style.color = 'gray';
+      comment.textContent = element.text;
 
 
+      commentsContainer.appendChild(time)
+      commentsContainer.appendChild(comment)
+    }
+  }
+  if (response.status === 401) {
+    window.location = '/templates/login.html';
   }
 }
 

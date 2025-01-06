@@ -8,7 +8,7 @@ const form = document.forms[0]
 const urlParams = new URLSearchParams(window.location.search);
 const message = urlParams.get("message");
 
-returnMessage = document.getElementById("return_message")
+const returnMessage = document.getElementById("return_message")
 
 if (message) {
     returnMessage.innerHTML = ""
@@ -29,13 +29,13 @@ form.addEventListener("submit", async(e) => {
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json")
 
-    var raw = JSON.stringify({
+    const raw = JSON.stringify({
         "username": username,
         "email": email,
         "hash": password
       });
 
-    var requestOptions = {
+    const requestOptions = {
         method: 'POST',
         headers: myHeaders,
         body: raw,
@@ -46,7 +46,7 @@ form.addEventListener("submit", async(e) => {
         `${baseUrl}/api/auth/signup`, 
         requestOptions)
     if (response.status == 201) {
-        result = await response.json()
+        const result = await response.json()
         const message = encodeURIComponent(`Congratulations, ${result.user.first_name} ${result.user.last_name}!\nYour registration was successful.\nPlease verify your email address.`)
         window.location = `/templates/images.html`
     }

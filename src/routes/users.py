@@ -52,8 +52,22 @@ async def get_current_user(current_user: User = Depends(auth_service.get_current
     "/{user_id}",
     response_model=UserValidationSchemaResponse
 )
-async def get_user(user_id: int, session: AsyncSession = Depends(get_db)):
+async def get_user(user_id: int, session: AsyncSession = Depends(get_db),
+                   current_user: User = Depends(auth_service.get_current_user)):
+    """
+        Retrieves a user by their ID.
 
+        Args:
+        - user_id (int): The ID of the user to retrieve.
+        - session (AsyncSession): The database session. Defaults to the current database session.
+        - current_user (User): The currently authenticated user. Defaults to the current authenticated user.
+
+        Returns:
+        - User: The retrieved user.
+
+        Raises:
+        - [Insert any potential exceptions that may be raised]
+    """
     user = await repository_users.get_user_by_id(user_id, session)
 
     return user

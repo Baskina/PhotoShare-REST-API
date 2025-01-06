@@ -1,4 +1,5 @@
 import {baseUrl} from './config.js';
+import {getTags} from "./tag.js";
 
 const token = localStorage.getItem("accessToken");
 
@@ -44,6 +45,9 @@ const getUserById = async (user_id) => {
     const result = await response.json()
     return result;
   }
+  if (response.status === 401) {
+    window.location = '/templates/login.html';
+  }
 }
 
 const getUserByUserName = async (username) => {
@@ -62,6 +66,9 @@ const getUserByUserName = async (username) => {
   if (response.status === 200) {
     const result = await response.json()
     return result;
+  }
+  if (response.status === 401) {
+    window.location = '/templates/login.html';
   }
 }
 
@@ -107,24 +114,6 @@ const getUserByUserName = async (username) => {
 //
 //})
 
-const getImage = async (photo_id) => {
-  const myHeaders = new Headers();
-  myHeaders.append(
-      "Authorization",
-      `Bearer ${token}`);
-
-  const requestOptions = {
-    method: 'GET',
-    headers: myHeaders,
-    redirect: 'follow'
-  };
-
-  const response = await fetch(`${baseUrl}/api/photos/${photo_id}`, requestOptions)
-
-  if (response.status === 200) {
-    window.location = `/templates/image.html?id=${photo_id}`;
-  }
-};
 
 const getImages = async () => {
   const myHeaders = new Headers();
@@ -162,15 +151,14 @@ const getImages = async () => {
       });
 
       const avatarUserNameDiv = document.createElement('div');
-      avatarUserNameDiv.className = "author mb-2 mt-2"
-      const avatarSpan = document.createElement('span');
+      avatarUserNameDiv.className = "mb-2 mt-2 flex-row"
+      const avatarSpan = document.createElement('div');
       avatarSpan.innerHTML = avatar.outerHTML;
 
 
-      const authorLink = document.createElement('a');
+      const authorLink = document.createElement('div');
       authorLink.className = 'author';
-      authorLink.textContent = user?.username;
-      authorLink.href = `user_profile.html?username=${user?.username}`
+      authorLink.textContent = `author: ${user?.username}`;
       avatarUserNameDiv.appendChild(avatarSpan);
       avatarUserNameDiv.appendChild(authorLink);
 
@@ -206,14 +194,16 @@ const getImages = async () => {
       imagesDescriptionDiv.appendChild(imageRatingDiv);
 
       const topicsDiv = document.createElement('div');
-      topicsDiv.className = 'node__topics';
+      topicsDiv.className = '';
       topicsDiv.textContent = 'Tags: ';
 
-      if(image?.tags) {
-        for (const tag of image.tags) {
-          const tagLink = document.createElement('a');
-          tagLink.className = 'btn mb-2 mb-md-0 btn-outline-danger btn-sm';
-          tagLink.textContent = tag.name;
+      const tags = await getTags(image.id);
+
+      if(tags) {
+        for (const tag of tags) {
+          const tagLink = document.createElement('span');
+          tagLink.style.color = 'blue';
+          tagLink.textContent = `#${tag.name} `;
           topicsDiv.appendChild(tagLink);
         }
       }
