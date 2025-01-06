@@ -31,7 +31,9 @@ from src.services.email import (
     send_email,
 )
 from fastapi.security import OAuth2PasswordBearer
-from src.entity.models import User
+from src.entity.models import User, Blacklist
+from sqlalchemy.future import select
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -72,7 +74,7 @@ async def signup(
             status_code=status.HTTP_409_CONFLICT, detail="Account already exists"
         )
     
-    body.hash = auth_service.get_password_hash(body.password)
+    body.hash = auth_service.get_password_hash(body.hash)
     
     # If this is the first user, they will be an administrator
     user_count = await repository_users.count_users(db)
@@ -83,6 +85,7 @@ async def signup(
 
     bt.add_task(send_email, new_user.email, new_user.username, str(request.base_url))
     return new_user
+
 
 @router.post("/login", response_model=TokenSchema)
 async def login(
@@ -126,31 +129,47 @@ async def login(
         "token_type": "bearer",
     }
 
+
+async def add_token_to_blacklist(token: str, db: AsyncSession):
+    """
+    Adds a token to the blacklist, effectively deactivating it.
+
+    Args:
+        token (str): The token to be added to the blacklist.
+        db (AsyncSession): The database session.
+
+    Returns:
+        None
+    """
+    db.add(Blacklist(token=token))
+    await db.commit()
+
+async def is_token_blacklisted(token: str, db: AsyncSession) -> bool:
+    """
+    Checks if a given token is present in the blacklist.
+
+    Args:
+        token (str): The token to check.
+        db (AsyncSession): The database session.
+
+    Returns:
+        bool: True if the token is blacklisted, False otherwise.
+    """
+    result = await db.execute(select(Blacklist).filter(Blacklist.token == token))
+    return result.scalar_one_or_none() is not None
+
+
 @router.post("/logout", status_code=status.HTTP_200_OK)
 async def logout(
     token: str = Depends(OAuth2PasswordBearer(tokenUrl="/api/auth/login")),
     db: AsyncSession = Depends(get_db)
 ):
     """
-    Logic for logging out the user.
-    
-    In a JWT-based authentication system, there is typically no need to delete the token server-side.
-    Once the token expires, it is automatically invalid. However, if you want to immediately revoke the token,
-    you can add it to a blacklist for immediate invalidation.
-
-    Args:
-        token (str): The user's access token to invalidate.
-        db (AsyncSession): The database session.
-
-    Returns:
-        dict: A message indicating the user has successfully logged out.
-
-    Example:
-        {
-            "message": "Successfully logged out"
-        }
+     Logic for logging out the user. The token is added to the blacklist to immediately deactivate it.
     """
+    await add_token_to_blacklist(token, db)
     return {"message": "Successfully logged out"}
+
 
 @router.get("/refresh_token", response_model=TokenSchema)
 async def refresh_token(
@@ -220,22 +239,18 @@ async def confirmed_email(token: str, db: AsyncSession = Depends(get_db)):
 
 async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)):
     """
-    Decodes the access token and retrieves the associated user from the database.
-
-    Args:
-        token (str): The user's access token.
-        db (AsyncSession): The database session.
-
-    Returns:
-        User: The user object corresponding to the decoded token.
-
-    Raises:
-        HTTPException: If the token is invalid or the user does not exist (401 Unauthorized).
+    Decodes the access token and retrieves the user, checking if the token is not blacklisted.
     """
     email = await auth_service.decode_access_token(token)
+    
+   # Check if the token is in the blacklist
+    if await is_token_blacklisted(token, db):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has been blacklisted")
+    
     user = await repository_users.get_user_by_email(email, db)
     if user is None:
         raise HTTPException(status_code=401, detail="Invalid credentials")
+    
     return user
 
 def role_required(required_role: str):
@@ -262,57 +277,3 @@ def role_required(required_role: str):
             return await func(*args, **kwargs)
         return wrapper
     return decorator
-
-@router.get("/admin_dashboard")
-async def admin_dashboard(
-    current_user: User = Depends(get_current_user)
-):
-    """
-    Access to the admin dashboard is allowed only for users with the "admin" role.
-
-    Args:
-        current_user (User): The current authenticated user, obtained from the access token.
-
-    Returns:
-        dict: A message welcoming the user to the Admin Dashboard.
-
-    Raises:
-        HTTPException: If the current user does not have the "admin" role (403 Forbidden).
-    """
-    if current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="Admin access required")
-    return {"message": "Welcome to the Admin Dashboard"}
-
-@router.get("/moderator_dashboard")
-@role_required("moderator")
-async def moderator_dashboard(
-    current_user: User = Depends(get_current_user)
-):
-    """
-    Access to the moderator dashboard is allowed only for users with the "moderator" role.
-
-    Args:
-        current_user (User): The current authenticated user, obtained from the access token.
-
-    Returns:
-        dict: A message welcoming the user to the Moderator Dashboard.
-
-    Raises:
-        HTTPException: If the current user does not have the "moderator" role (403 Forbidden).
-    """
-    return {"message": "Welcome to the Moderator Dashboard"}
-
-@router.get("/user_dashboard")
-async def user_dashboard(
-    current_user: User = Depends(get_current_user)
-):
-    """
-    Provides access to the user dashboard. Available to all authenticated users.
-
-    Args:
-        current_user (User): The current authenticated user, obtained from the access token.
-
-    Returns:
-        dict: A message welcoming the user to the User Dashboard.
-    """
-    return {"message": "Welcome to the User Dashboard"}
