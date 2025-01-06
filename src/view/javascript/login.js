@@ -10,24 +10,24 @@ const returnMessage = document.getElementById("return_message")
 
 if (message) {
     returnMessage.innerHTML = "";
-    
-    const lines = message.split("\n"); 
+
+    const lines = message.split("\n");
     const returnMessageContainer = document.createElement("div");
     returnMessageContainer.className = "my_display-4 text-body text-center";
-    
+
     lines.forEach((line) => {
         const lineElement = document.createElement("p");
         lineElement.textContent = line;
         returnMessageContainer.appendChild(lineElement);
 
     });
-    
+
     returnMessage.appendChild(returnMessageContainer);
     returnMessage.classList.add("text-center");
 }
 
 
-form.addEventListener("submit", async(e) => {
+form.addEventListener("submit", async (e) => {
     e.preventDefault()
     const username = form.username.value
     const password = form.password.value
@@ -44,10 +44,10 @@ form.addEventListener("submit", async(e) => {
         headers: myHeaders,
         body: urlencoded,
         redirect: 'follow'
-      };
+    };
 
     const response = await fetch(
-        `${baseUrl}/api/auth/login`, 
+        `${baseUrl}/api/auth/login`,
         requestOptions);
     const result = await response.json()
     if (response.status == 200) {
