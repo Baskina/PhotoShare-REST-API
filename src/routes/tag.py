@@ -2,14 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from src.database.db import get_db
-from src.entity.models import Tag, Photo, photo_tag_association
+from src.entity.models import User,Tag, Photo, photo_tag_association
 from src.schemas.tag import TagResponse
 from typing import List
-
+from src.services.auth import auth_service
 router_tag = APIRouter(prefix="/tags", tags=["tags"])
 
 @router_tag.get("/", response_model=List[TagResponse])
-async def get_tags(photo_id: int, session: AsyncSession = Depends(get_db)):
+async def get_tags(photo_id: int, session: AsyncSession = Depends(get_db),user=Depends(auth_service.get_current_user)):
     """
         Retrieve a list of tags associated with a specific photo.
 
@@ -27,7 +27,7 @@ async def get_tags(photo_id: int, session: AsyncSession = Depends(get_db)):
     return [TagResponse(name=tag.name) for tag in tags]
 
 @router_tag.delete("/{tag_name}", status_code=204)
-async def delete_tag(tag_name: str, session: AsyncSession = Depends(get_db)):
+async def delete_tag(tag_name: str, session: AsyncSession = Depends(get_db),user=Depends(auth_service.get_current_user)):
     """
         Delete a tag by its name, including its associations with photos.
 
@@ -60,7 +60,8 @@ async def delete_tag(tag_name: str, session: AsyncSession = Depends(get_db)):
 async def add_tags_to_photo_route(
     photo_id: int,
     tag_names: List[str],
-    session: AsyncSession = Depends(get_db)
+    session: AsyncSession = Depends(get_db),
+    user=Depends(auth_service.get_current_user)
 ):
     """
     Add a list of tags to a specific photo.
