@@ -57,12 +57,12 @@ class Comment(Base):
     __tablename__ = "comment"
 
     id: Mapped[int] = mapped_column(primary_key=True)  
-    text: Mapped[str] = mapped_column(String(250), nullable=False)  
-    photo_id: Mapped[int] = mapped_column(ForeignKey("photo.id"), nullable=False)
-    photo: Mapped["Photo"] = relationship("Photo", backref="comment", lazy="joined")
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
-    user: Mapped["User"] = relationship("User", backref="comment", lazy="joined")
-    created_at: Mapped[date] = mapped_column(DateTime, default=func.now(), nullable=False)  
+    text: Mapped[str] = mapped_column(String(250), nullable=False)
+    photo_id: Mapped[int] = mapped_column(ForeignKey("photos.id"), nullable=False)
+    photo: Mapped["Photo"] = relationship("Photo", back_populates="comments", lazy="joined")  
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    user: Mapped["User"] = relationship("User", back_populates="comments", lazy="joined")
+    created_at: Mapped[date] = mapped_column(DateTime, default=func.now(), nullable=False)
     updated_at: Mapped[date] = mapped_column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)  
 
 
