@@ -12,8 +12,8 @@ router = APIRouter(prefix="/comments", tags=["Comments"])
 
 @router.post("/", response_model=CommentResponse)
 async def add_comment(
-    comment: CommentCreate,
-    user_id: int,
+    comment: CommentCreate, 
+    user_id: int, 
     session: AsyncSession = Depends(get_db)
 ):
     """
@@ -23,18 +23,18 @@ async def add_comment(
 
 @router.get("/{photo_id}", response_model=List[CommentResponse])
 async def get_photo_comments(
-    photo_id: int,
+    photo_id: int, 
     session: AsyncSession = Depends(get_db)
 ):
-
-
+    
+    
     return await get_comments_by_photo(session, photo_id)
 
 @router.put("/{comment_id}", response_model=CommentResponse)
 async def edit_comment(
-    comment_id: int,
-    comment: CommentUpdate,
-    user_id: int,
+    comment_id: int, 
+    comment: CommentUpdate, 
+    user_id: int, 
     session: AsyncSession = Depends(get_db)
 ):
     """
@@ -48,7 +48,7 @@ async def edit_comment(
 @router.delete("/{comment_id}")
 @roles_required(["admin", "moderator"])
 async def remove_comment(
-    comment_id: int,
+    comment_id: int, 
     session: AsyncSession = Depends(get_db),
     current_user: User = Depends(auth_service.get_current_user)
 ):
