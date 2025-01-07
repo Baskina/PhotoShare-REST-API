@@ -14,6 +14,7 @@ from fastapi.security import (
 )
 from fastapi_limiter.depends import RateLimiter
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.responses import RedirectResponse
 
 from src.database.db import get_db
 from src.repository import (
@@ -235,7 +236,8 @@ async def confirmed_email(token: str, db: AsyncSession = Depends(get_db)):
     if user.confirmed:
         return {"message": "Your email is already confirmed"}
     await repository_users.confirmed_email(email, db)
-    return {"message": "Email confirmed"}
+
+    return RedirectResponse(url="/", status_code=302)
 
 async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)):
     """
