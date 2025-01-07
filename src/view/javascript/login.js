@@ -13,7 +13,7 @@ if (message) {
 
     const lines = message.split("\n");
     const returnMessageContainer = document.createElement("div");
-    returnMessageContainer.className = "my_display-4 text-body text-center";
+    returnMessageContainer.className = "text-center bright-primary-color";
 
     lines.forEach((line) => {
         const lineElement = document.createElement("p");
@@ -59,6 +59,7 @@ form.addEventListener("submit", async (e) => {
     }
 
     if (response.status === 401) {
-        window.location = '/templates/login.html';
+        returnMessage.textContent = result.detail || result.message;
+        returnMessage.style.color = "red";
     }
 })

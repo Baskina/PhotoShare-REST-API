@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>PhotoShare-REST-API documentation &#8212; PhotoShare-REST-API  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css?v=279e0f84" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">PhotoShare-REST-API  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">PhotoShare-REST-API documentation</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="photoshare-rest-api-documentation">
+<h1>PhotoShare-REST-API documentation<a class="headerlink" href="#photoshare-rest-api-documentation" title="Link to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+<section id="module-main">
+<span id="photoshare-rest-api-main"></span><h1>PhotoShare-REST-API main<a class="headerlink" href="#module-main" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="main.healthchecker">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">healthchecker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.healthchecker" title="Link to this definition">¶</a></dt>
+<dd><p>Health check endpoint to verify the API’s connection to the database.</p>
+<p>Returns a success message if the database connection is established,
+otherwise raises an HTTP exception with a 500 status code.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>HTTPException</strong> – If the database is not configured correctly or
+an error occurs while connecting to the database.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing a welcome message.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.root">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">root</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.root" title="Link to this definition">¶</a></dt>
+<dd><p>Root endpoint of the API, serving as a navigation page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary containing a message indicating the navigation page.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.startup">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">startup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.startup" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the Redis connection and FastAPI Limiter on application startup.</p>
+<p>This function is called when the FastAPI application starts up. It establishes a connection to the Redis database
+using the configuration settings from the <cite>config</cite> module, and then initializes the FastAPI Limiter using the
+Redis connection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.repository.photos">
+<span id="photoshare-rest-api-repository-photos"></span><h1>PhotoShare-REST-API repository Photos<a class="headerlink" href="#module-src.repository.photos" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.photos.add_photo">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.photos.</span></span><span class="sig-name descname"><span class="pre">add_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Photo</span></span></span><a class="headerlink" href="#src.repository.photos.add_photo" title="Link to this definition">¶</a></dt>
+<dd><p>Adds a new photo to the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>url (str): The URL of the photo.
+description (str): The description of the photo.
+db (AsyncSession): The database session.
+user_id (int): The ID of the user who added the photo.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Photo: The newly added photo.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.photos.delete_like_of_photo">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.photos.</span></span><span class="sig-name descname"><span class="pre">delete_like_of_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">like_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Photo</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#src.repository.photos.delete_like_of_photo" title="Link to this definition">¶</a></dt>
+<dd><p>Deletes a like of a photo and recalculates the photo’s rating.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>like_id (int): The ID of the like to delete.
+db (AsyncSession): The database session.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the like does not exist.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Photo | None: The photo if it exists, otherwise None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.photos.delete_photo">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.photos.</span></span><span class="sig-name descname"><span class="pre">delete_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">photo_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.repository.photos.delete_photo" title="Link to this definition">¶</a></dt>
+<dd><p>Deletes a photo from the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>photo_id (int): The ID of the photo to delete.
+db (AsyncSession): The database session.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Photo: The deleted photo.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.photos.generate_and_save_qr">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.photos.</span></span><span class="sig-name descname"><span class="pre">generate_and_save_qr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">photo_transfer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PhotoTransfer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qr_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PhotoTransfer</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#src.repository.photos.generate_and_save_qr" title="Link to this definition">¶</a></dt>
+<dd><p>Generates a QR code URL for a transformed photo’s link and saves it to the database.</p>
+<p>This function generates a QR code URL for the <cite>link_url</cite> of a <cite>PhotoTransfer</cite> record
+and saves it in the <cite>link_qr</cite> field.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>qr_url: The base URL of the QR code
+photo_transfer (PhotoTransfer): The ID of the <cite>PhotoTransfer</cite> record to update.
+base_url (str): The base URL of the server where the QR code will be hosted.
+db (AsyncSession): The database session used for database operations.</p>
+</dd>
+<dt>Returns:</dt><dd><p>PhotoTransfer | None: The updated <cite>PhotoTransfer</cite> record if successful, otherwise None.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the <cite>PhotoTransfer</cite> record with the given ID is not found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.photos.rate_photo">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.photos.</span></span><span class="sig-name descname"><span class="pre">rate_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">photo_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">like_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Photo</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#src.repository.photos.rate_photo" title="Link to this definition">¶</a></dt>
+<dd><p>Rates a photo.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>photo_id (int): The ID of the photo to rate.
+like_value (int): The value to rate the photo with.
+user_id (int): The ID of the user who is rating the photo.
+db (AsyncSession): The database session.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the user has already rated the photo.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Photo | None: The rated photo if it exists, otherwise None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.photos.read_all_photos">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.photos.</span></span><span class="sig-name descname"><span class="pre">read_all_photos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Photo</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#src.repository.photos.read_all_photos" title="Link to this definition">¶</a></dt>
+<dd><p>Gets all photos for the current user from the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>limit (int): The maximum number of photos to return.
+offset (int): The offset from which to start returning photos.
+db (AsyncSession): The database session.
+user_id (int): The ID of the user to filter photos by.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list[Photo]: A list of photos that belong to the user.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.photos.read_photo">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.photos.</span></span><span class="sig-name descname"><span class="pre">read_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">photo_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Photo</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#src.repository.photos.read_photo" title="Link to this definition">¶</a></dt>
+<dd><p>Gets a photo from the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>photo_id (int): The ID of the photo to get.
+db (AsyncSession): The database session.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Photo | None: The photo if found, otherwise None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.photos.save_transform_photo">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.photos.</span></span><span class="sig-name descname"><span class="pre">save_transform_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">photo_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transformed_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PhotoTransfer</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#src.repository.photos.save_transform_photo" title="Link to this definition">¶</a></dt>
+<dd><p>Saves a transformed photo to the database.</p>
+<p>This function creates a new entry in the <cite>PhotoTransfer</cite> table, associating
+the transformed photo with the original photo and storing the transformed image URL.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>photo_id (int): The ID of the original photo associated with the transformation.
+image (str): The URL or path of the transformed image.
+transformed_url (str): The URL of the transformed image.
+db (AsyncSession): The database session used for database operations.</p>
+</dd>
+<dt>Returns:</dt><dd><p>PhotoTransfer | None: The created <cite>PhotoTransfer</cite> record if successful, otherwise None.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If there is an issue with the database operation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.photos.search_photos">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.photos.</span></span><span class="sig-name descname"><span class="pre">search_photos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyword:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_id:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_rating:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_rating:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_created_at:</span> <span class="pre">&lt;module</span> <span class="pre">'datetime'</span> <span class="pre">from</span> <span class="pre">'C:\\Users\\Dell\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\datetime.py'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_created_at:</span> <span class="pre">&lt;module</span> <span class="pre">'datetime'</span> <span class="pre">from</span> <span class="pre">'C:\\Users\\Dell\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\datetime.py'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db:</span> <span class="pre">~sqlalchemy.ext.asyncio.session.AsyncSession</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Photo</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#src.repository.photos.search_photos" title="Link to this definition">¶</a></dt>
+<dd><p>Searches photos in the database by keyword, tag ID, rating, and creation date.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>limit (int): The maximum number of photos to return.
+offset (int): The offset from which to start returning photos.
+keyword (str): The keyword to search for in the description.
+tag_id (int): The ID of the tag to search for.
+min_rating (int): The minimum rating to search for.
+max_rating (int): The maximum rating to search for.
+min_created_at (datetime): The minimum creation date to search for.
+max_created_at (datetime): The maximum creation date to search for.
+db (AsyncSession): The database session.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list[Photo]: A list of photos that match the search criteria.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.photos.search_photos_by_user">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.photos.</span></span><span class="sig-name descname"><span class="pre">search_photos_by_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Photo</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#src.repository.photos.search_photos_by_user" title="Link to this definition">¶</a></dt>
+<dd><p>Searches for photos by user ID and name.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>limit (int): The maximum number of photos to return.
+offset (int): The offset from which to start returning photos.
+user_id (int): The ID of the user to search for. If 0, search all users.
+name (str): The part of the username to search for.
+db (AsyncSession): The database session.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list[Photo]: A list of photos that match the criteria.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.photos.update_photo">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.photos.</span></span><span class="sig-name descname"><span class="pre">update_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">photo_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Photo</span></span></span><a class="headerlink" href="#src.repository.photos.update_photo" title="Link to this definition">¶</a></dt>
+<dd><p>Updates description of the photo in the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>photo_id (int): The ID of the photo to update.
+description (str): The new description of the photo.
+db (AsyncSession): The database session.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Photo: The updated photo.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.photos.view_rating_photo">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.photos.</span></span><span class="sig-name descname"><span class="pre">view_rating_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">photo_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#src.repository.photos.view_rating_photo" title="Link to this definition">¶</a></dt>
+<dd><p>Gets all likes of a photo.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>photo_id (int): The ID of the photo.
+db (AsyncSession): The database session.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the photo does not exist.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>list[dict]: A list of dictionaries containing the like information. Each dictionary has the following keys:</dt><dd><p>id (int): The ID of the like.
+like_value (int): The value of the like.
+user_id (int): The ID of the user who liked the photo.
+username (str): The username of the user who liked the photo.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.repository.comments">
+<span id="photoshare-rest-api-repository-comments"></span><h1>PhotoShare-REST-API repository Comments<a class="headerlink" href="#module-src.repository.comments" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.comments.create_comment">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.comments.</span></span><span class="sig-name descname"><span class="pre">create_comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">photo_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Comment</span></span></span><a class="headerlink" href="#src.repository.comments.create_comment" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a new comment in the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>session (AsyncSession): The database session.
+text (str): The text of the comment.
+user_id (int): The ID of the user who made the comment.
+photo_id (int): The ID of the photo the comment is about.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Comment: The newly created comment.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.comments.delete_comment">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.comments.</span></span><span class="sig-name descname"><span class="pre">delete_comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.repository.comments.delete_comment" title="Link to this definition">¶</a></dt>
+<dd><p>Deletes a comment from the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>session (AsyncSession): The database session.
+comment_id (int): The ID of the comment to delete.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.comments.get_comments_by_photo">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.comments.</span></span><span class="sig-name descname"><span class="pre">get_comments_by_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">photo_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Comment</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#src.repository.comments.get_comments_by_photo" title="Link to this definition">¶</a></dt>
+<dd><p>Gets all comments for the specified photo.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>session (AsyncSession): The database session.
+photo_id (int): The ID of the photo for which to retrieve comments.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list[Comment]: A list of comments for the specified photo.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.comments.update_comment">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.comments.</span></span><span class="sig-name descname"><span class="pre">update_comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Comment</span></span></span><a class="headerlink" href="#src.repository.comments.update_comment" title="Link to this definition">¶</a></dt>
+<dd><p>Updates the text of a comment if the user is the owner.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>session (AsyncSession): The database session.
+comment_id (int): The ID of the comment to update.
+new_text (str): The new text for the comment.
+user_id (int): The ID of the user attempting to update the comment.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Comment: The updated comment.</p>
+</dd>
+<dt>Raises:</dt><dd><p>PermissionError: If the user is not the owner of the comment.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.repository.users">
+<span id="photoshare-rest-api-repository-users"></span><h1>PhotoShare-REST-API repository Users<a class="headerlink" href="#module-src.repository.users" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.users.confirmed_email">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.users.</span></span><span class="sig-name descname"><span class="pre">confirmed_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#src.repository.users.confirmed_email" title="Link to this definition">¶</a></dt>
+<dd><p>Confirms a user’s email address by updating their confirmation status in the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>email (str): The email address of the user to confirm.
+db (AsyncSession): The database session.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.users.count_users">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.users.</span></span><span class="sig-name descname"><span class="pre">count_users</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#src.repository.users.count_users" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the number of users in the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db (AsyncSession): The database session.</p>
+</dd>
+<dt>Returns:</dt><dd><p>int: The number of users in the database.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.users.create_user">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.users.</span></span><span class="sig-name descname"><span class="pre">create_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UserValidationSchema</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.repository.users.create_user" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a new user in the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>body (UserValidationSchema): The user’s information to be added.
+db (AsyncSession): The database session. Defaults to Depends(get_db).</p>
+</dd>
+<dt>Returns:</dt><dd><p>User: The newly created user.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.users.get_user_by_email">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.users.</span></span><span class="sig-name descname"><span class="pre">get_user_by_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.repository.users.get_user_by_email" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves a user from the database based on the provided email address.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>email (str): The email address of the user to retrieve.
+db (AsyncSession): The database session. Defaults to Depends(get_db).</p>
+</dd>
+<dt>Returns:</dt><dd><p>User or None: The retrieved user, or None if no user is found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.users.update_avatar_url">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.users.</span></span><span class="sig-name descname"><span class="pre">update_avatar_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">User</span></span></span><a class="headerlink" href="#src.repository.users.update_avatar_url" title="Link to this definition">¶</a></dt>
+<dd><p>Updates the avatar URL of a user in the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>email (str): The email address of the user to update.
+url (str | None): The new avatar URL.
+db (AsyncSession): The database session.</p>
+</dd>
+<dt>Returns:</dt><dd><p>User: The user with the updated avatar URL.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.repository.users.update_token">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.repository.users.</span></span><span class="sig-name descname"><span class="pre">update_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">User</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.repository.users.update_token" title="Link to this definition">¶</a></dt>
+<dd><p>Updates the refresh token of a user in the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user (User): The user whose refresh token is to be updated.
+token (str | None): The new refresh token.
+db (AsyncSession): The database session.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.routes.photos">
+<span id="photoshare-rest-api-routes-photos"></span><h1>PhotoShare-REST-API routes Photos<a class="headerlink" href="#module-src.routes.photos" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.photos.create_photo">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.photos.</span></span><span class="sig-name descname"><span class="pre">create_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Form(PydanticUndefined)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Form(PydanticUndefined)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UploadFile</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">File(PydanticUndefined)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.photos.create_photo" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a new photo and uploads it to Cloudinary. The photo is then associated with tags and saved in the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>description (str): A description of the photo.
+tags (List[str]): A list of tags to associate with the photo. Maximum of 5 tags are allowed.
+file (UploadFile): The file to upload as the photo.
+session (AsyncSession): The database session used to interact with the database.
+user (User): The currently authenticated user making the request.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If more than 5 tags are provided.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>dict: A dictionary containing the following fields:</dt><dd><ul class="simple">
+<li><p>id (int): The ID of the newly created photo.</p></li>
+<li><p>user_id (int): The ID of the user who uploaded the photo.</p></li>
+<li><p>description (str): The description of the photo.</p></li>
+<li><p>tags (List[str]): A list of tags associated with the photo.</p></li>
+<li><p>image (str): The URL of the uploaded image in Cloudinary.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.photos.create_qr_code">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.photos.</span></span><span class="sig-name descname"><span class="pre">create_qr_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">photo_transfer_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">User</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.photos.create_qr_code" title="Link to this definition">¶</a></dt>
+<dd><p>Generates a QR code URL for a transformed photo’s link and saves it to the database.</p>
+<p>Args:
+current_user (User): The currently authenticated user.
+photo_transfer_id (int): The ID of the PhotoTransfer record to update.
+db (AsyncSession): The database session used for database operations.
+base_url (str): The base URL of the server where the QR code will be hosted.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>PhotoTransfer | None: The updated PhotoTransfer record if successful, otherwise None.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the PhotoTransfer record with the given ID is not found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.photos.delete_like_of_photo">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.photos.</span></span><span class="sig-name descname"><span class="pre">delete_like_of_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">like_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Path(PydanticUndefined)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">User</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#src.routes.photos.delete_like_of_photo" title="Link to this definition">¶</a></dt>
+<dd><p>Deletes a like of a photo by its ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>like_id (int): The ID of the like to delete.
+db (AsyncSession): The database session.
+current_user (User): The currently authenticated user.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.photos.delete_photo">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.photos.</span></span><span class="sig-name descname"><span class="pre">delete_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">photo_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Path(PydanticUndefined)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">User</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.photos.delete_photo" title="Link to this definition">¶</a></dt>
+<dd><p>Deletes a photo from the database and from Cloudinary.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>photo_id (int): The ID of the photo to delete.
+db (AsyncSession): The database session.
+current_user (User): The currently authenticated user, obtained through authentication services.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the photo does not exist, or the user does not have permission to delete it.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.photos.rate_photo">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.photos.</span></span><span class="sig-name descname"><span class="pre">rate_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">photo_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Path(PydanticUndefined)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">like_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Query(PydanticUndefined)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">User</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.photos.rate_photo" title="Link to this definition">¶</a></dt>
+<dd><p>Rates a photo with a value between 1 and 5.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>photo_id (int): The ID of the photo to rate.
+like_value (int): The value to rate the photo with.
+db (AsyncSession): The database session.
+current_user (User): The currently authenticated user.</p>
+</dd>
+<dt>Raises:</dt><dd><dl class="simple">
+<dt>HTTPException:</dt><dd><ul class="simple">
+<li><p>404: If the photo with the given ID is not found.</p></li>
+<li><p>400: If the rating value is not between 1 and 5.</p></li>
+<li><p>400: If the current user is the same as the photo’s user.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>PhotosSchemaResponse: The rated photo.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.photos.read_photo">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.photos.</span></span><span class="sig-name descname"><span class="pre">read_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">photo_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Path(PydanticUndefined)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">User</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.photos.read_photo" title="Link to this definition">¶</a></dt>
+<dd><p>Gets a photo from the database by its ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>photo_id (int): The ID of the photo to retrieve.
+db (AsyncSession): The database session.
+current_user (User): The currently authenticated user, obtained through authentication services.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the photo does not exist, or the user does not have permission to read it.</p>
+</dd>
+<dt>Returns:</dt><dd><p>PhotosSchemaResponse: The retrieved photo.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.photos.read_photos">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.photos.</span></span><span class="sig-name descname"><span class="pre">read_photos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Query(10)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Query(0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">User</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">PhotosSchemaResponse</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#src.routes.photos.read_photos" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves a list of photos for the current user.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>limit (int): The maximum number of photos to return.
+offset (int): The offset from which to start returning photos.
+db (AsyncSession): The database session.
+current_user (User): The currently authenticated user.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list[PhotosSchemaResponse]: A list of photos that belong to the current user.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.photos.search_photos">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.photos.</span></span><span class="sig-name descname"><span class="pre">search_photos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">Query(10)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">Query(0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyword:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">Query(None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_id:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">Query(None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_rating:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">Query(0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_rating:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">Query(5)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_created_at:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">Query(2020-01-01T00:00:00)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_created_at:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">Query(2025-01-05</span> <span class="pre">16:56:53.494414)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db:</span> <span class="pre">~sqlalchemy.ext.asyncio.session.AsyncSession</span> <span class="pre">=</span> <span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user:</span> <span class="pre">~src.entity.models.User</span> <span class="pre">=</span> <span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.photos.search_photos" title="Link to this definition">¶</a></dt>
+<dd><p>Gets all photos from the database by keyword and tag ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>limit (int): The maximum number of photos to return.
+offset (int): The offset from which to start returning photos.
+keyword (str): The keyword to search for in the description.
+tag_id (int): The ID of the tag to search for.
+min_rating (int): The minimum rating to search for.
+max_rating (int): The maximum rating to search for.
+min_created_at (datetime): The minimum creation date to search for.
+max_created_at (datetime): The maximum creation date to search for.
+db (AsyncSession): The database session.
+current_user (User): The currently authenticated user, obtained through authentication services.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list[PhotosSchemaResponse]: A list of photos that match the search criteria.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If no photos are found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.photos.search_photos_by_user">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.photos.</span></span><span class="sig-name descname"><span class="pre">search_photos_by_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Query(10)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Query(0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Path(PydanticUndefined)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Query(None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">User</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">PhotosSchemaResponse</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#src.routes.photos.search_photos_by_user" title="Link to this definition">¶</a></dt>
+<dd><p>Gets all photos from the database by user ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>limit (int): The maximum number of photos to return.
+offset (int): The offset from which to start returning photos.
+user_id (int): User ID to search. If ‘0’ - a list of photos of all users is displayed.
+name (str): The name of the user to search for.
+db (AsyncSession): The database session.
+current_user (User): The currently authenticated user, obtained through authentication services.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list[PhotosSchemaResponse]: A list of photos that match the search criteria.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If no photos are found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.photos.transform_photo">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.photos.</span></span><span class="sig-name descname"><span class="pre">transform_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">photo_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'fill'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">effect</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.photos.transform_photo" title="Link to this definition">¶</a></dt>
+<dd><p>Transforms a photo by applying various modifications such as resizing, cropping, rotating, and adding effects.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>photo_id (int): The ID of the photo to transform.
+width (int): The width of the transformed image (default is 300).
+height (int): The height of the transformed image (default is 300).
+crop (str): The crop mode (default is ‘fill’). Other options can include ‘scale’, ‘fit’, etc.
+angle (int): The angle to rotate the image (default is 0).
+effect (str, optional): The name of the effect to apply (e.g., ‘grayscale’). If not provided, no effect is applied.
+quality (int, optional): The quality of the transformed image (default is None).
+format (str, optional): The format to convert the image to (e.g., ‘jpeg’). If not provided, no conversion is applied.
+user (User): The currently authenticated user.
+session (AsyncSession): The database session for querying the photo.</p>
+</dd>
+<dt>Raises:</dt><dd><dl class="simple">
+<dt>HTTPException:</dt><dd><ul class="simple">
+<li><p>404: If the photo with the given ID is not found.</p></li>
+<li><p>403: If the current user does not have permission to transform the photo.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>dict: A dictionary containing the transformed image URL.</dt><dd><ul class="simple">
+<li><p>transformed_url (str): The URL of the transformed image.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.photos.update_photo">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.photos.</span></span><span class="sig-name descname"><span class="pre">update_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">photo_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">User</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.photos.update_photo" title="Link to this definition">¶</a></dt>
+<dd><p>Updates description of a photo in the database by its ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>photo_id (int): The ID of the photo to update.
+description (str): The new description of the photo.
+db (AsyncSession): The database session.
+current_user (User): The currently authenticated user, obtained through authentication services.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the photo does not exist, or the user does not have permission to update it.</p>
+</dd>
+<dt>Returns:</dt><dd><p>PhotosSchemaResponse: The updated photo.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.photos.view_rating_photo">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.photos.</span></span><span class="sig-name descname"><span class="pre">view_rating_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">photo_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Path(PydanticUndefined)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">User</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.photos.view_rating_photo" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves all likes of a photo by its ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>photo_id (int): The ID of the photo to view likes.
+db (AsyncSession): The database session.
+current_user (User): The currently authenticated user.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list[dict]: A list of dictionaries containing the like information.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.routes.comments">
+<span id="photoshare-rest-api-routes-comments"></span><h1>PhotoShare-REST-API routes Comments<a class="headerlink" href="#module-src.routes.comments" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.comments.add_comment">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.comments.</span></span><span class="sig-name descname"><span class="pre">add_comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CommentCreate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.comments.add_comment" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a new comment for a given photo.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>comment (CommentCreate): The comment to be created.
+user_id (int): The ID of the user who is making the comment.
+session (AsyncSession): The database session.</p>
+</dd>
+<dt>Returns:</dt><dd><p>CommentResponse: The newly created comment.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.comments.edit_comment">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.comments.</span></span><span class="sig-name descname"><span class="pre">edit_comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comment_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CommentUpdate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.comments.edit_comment" title="Link to this definition">¶</a></dt>
+<dd><p>Updates a comment by its ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>comment_id (int): The ID of the comment to update.
+comment (CommentUpdate): The new comment text.
+user_id (int): The ID of the user who made the comment.
+session (AsyncSession): The database session.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the user is not the owner of the comment.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.comments.get_photo_comments">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.comments.</span></span><span class="sig-name descname"><span class="pre">get_photo_comments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">photo_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.comments.get_photo_comments" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieve all comments associated with a photo by its ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>photo_id (int): The ID of the photo for which to retrieve comments.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List[CommentResponse]: A list of comments associated with the specified photo.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.comments.remove_comment">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.comments.</span></span><span class="sig-name descname"><span class="pre">remove_comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comment_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">User</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.comments.remove_comment" title="Link to this definition">¶</a></dt>
+<dd><p>Deletes a comment by its ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>comment_id (int): The ID of the comment to delete.
+session (AsyncSession): The database session.
+current_user (User): The currently authenticated user.</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: A message indicating that the comment was deleted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.routes.users">
+<span id="photoshare-rest-api-routes-users"></span><h1>PhotoShare-REST-API routes Users<a class="headerlink" href="#module-src.routes.users" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.users.get_current_user">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.users.</span></span><span class="sig-name descname"><span class="pre">get_current_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UploadFile</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">File(PydanticUndefined)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">User</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.users.get_current_user" title="Link to this definition">¶</a></dt>
+<dd><p>Updates the avatar of the currently authenticated user.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>file (UploadFile): The file to be uploaded as the new avatar.
+current_user (User): The currently authenticated user, obtained through authentication services.
+db (AsyncSession): The database session.</p>
+</dd>
+<dt>Returns:</dt><dd><p>User: The user with the updated avatar URL.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.routes.auth">
+<span id="photoshare-rest-api-routes-auth"></span><h1>PhotoShare-REST-API routes Auth<a class="headerlink" href="#module-src.routes.auth" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.auth.add_token_to_blacklist">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.auth.</span></span><span class="sig-name descname"><span class="pre">add_token_to_blacklist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.auth.add_token_to_blacklist" title="Link to this definition">¶</a></dt>
+<dd><p>Adds a token to the blacklist, effectively deactivating it.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>token (str): The token to be added to the blacklist.
+db (AsyncSession): The database session.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.auth.admin_dashboard">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.auth.</span></span><span class="sig-name descname"><span class="pre">admin_dashboard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">User</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.auth.admin_dashboard" title="Link to this definition">¶</a></dt>
+<dd><p>Access to the admin dashboard is allowed only for users with the “admin” role.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>current_user (User): The current authenticated user, obtained from the access token.</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: A message welcoming the user to the Admin Dashboard.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the current user does not have the “admin” role (403 Forbidden).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.auth.confirmed_email">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.auth.</span></span><span class="sig-name descname"><span class="pre">confirmed_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.auth.confirmed_email" title="Link to this definition">¶</a></dt>
+<dd><p>Handles email confirmation requests by validating the provided confirmation token,
+checking for existing user accounts, verifying the user’s confirmation status,
+updating the user’s confirmation status in the database, and returning a confirmation message.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>token (str): The email confirmation token to verify.
+db (AsyncSession): The database session.</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: A confirmation message indicating whether the email was confirmed or if it was already confirmed.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the user account is not found (400 Bad Request) or if the email is already confirmed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.auth.get_current_user">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.auth.</span></span><span class="sig-name descname"><span class="pre">get_current_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(OAuth2PasswordBearer)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.auth.get_current_user" title="Link to this definition">¶</a></dt>
+<dd><p>Decodes the access token and retrieves the user, checking if the token is not blacklisted.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.auth.is_token_blacklisted">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.auth.</span></span><span class="sig-name descname"><span class="pre">is_token_blacklisted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#src.routes.auth.is_token_blacklisted" title="Link to this definition">¶</a></dt>
+<dd><p>Checks if a given token is present in the blacklist.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>token (str): The token to check.
+db (AsyncSession): The database session.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the token is blacklisted, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.auth.login">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.auth.</span></span><span class="sig-name descname"><span class="pre">login</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OAuth2PasswordRequestForm</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(NoneType)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.auth.login" title="Link to this definition">¶</a></dt>
+<dd><p>Handles user login by validating the provided credentials, checking for account confirmation,
+verifying the password, generating access and refresh tokens, and updating the user’s token in the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>body (OAuth2PasswordRequestForm): The user’s login credentials, including username (email) and password.
+db (AsyncSession): The database session used to query the database.</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: A dictionary containing the access token, refresh token, and token type.</p>
+</dd>
+<dt>Raises:</dt><dd><dl class="simple">
+<dt>HTTPException: If the email is invalid (401 Unauthorized), the email is not confirmed (401 Unauthorized), </dt><dd><p>or the password is incorrect (401 Unauthorized).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.auth.logout">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.auth.</span></span><span class="sig-name descname"><span class="pre">logout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(OAuth2PasswordBearer)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.auth.logout" title="Link to this definition">¶</a></dt>
+<dd><p>Logic for logging out the user. The token is added to the blacklist to immediately deactivate it.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.auth.moderator_dashboard">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.auth.</span></span><span class="sig-name descname"><span class="pre">moderator_dashboard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.auth.moderator_dashboard" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.auth.refresh_token">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.auth.</span></span><span class="sig-name descname"><span class="pre">refresh_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">credentials</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Security(HTTPBearer)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.auth.refresh_token" title="Link to this definition">¶</a></dt>
+<dd><p>Handles refresh token requests by validating the provided refresh token,
+checking for account confirmation, verifying the token, generating new access
+and refresh tokens, and updating the user’s token in the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>credentials (HTTPAuthorizationCredentials): The user’s refresh token to authenticate.
+db (AsyncSession): The database session.</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: A dictionary containing the new access token, refresh token, and token type.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the refresh token is invalid or expired (401 Unauthorized).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.auth.role_required">
+<span class="sig-prename descclassname"><span class="pre">src.routes.auth.</span></span><span class="sig-name descname"><span class="pre">role_required</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">required_role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.auth.role_required" title="Link to this definition">¶</a></dt>
+<dd><p>Decorator to enforce role-based access control on routes. Checks if the user has the required role.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>required_role (str): The required role to access the route.</p>
+</dd>
+<dt>Returns:</dt><dd><p>function: A decorator function that checks the user’s role before calling the decorated function.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the user’s role does not match the required role (403 Forbidden).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.auth.signup">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.auth.</span></span><span class="sig-name descname"><span class="pre">signup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UserValidationSchema</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BackgroundTasks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.auth.signup" title="Link to this definition">¶</a></dt>
+<dd><p>Handles user signup by validating the provided information, checking for existing accounts,
+hashing the password, creating a new user, and sending a confirmation email.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>body (UserValidationSchema): The user registration data, including email, password, and other details.
+bt (BackgroundTasks): A FastAPI BackgroundTasks instance for performing asynchronous operations (e.g., sending emails).
+request (Request): The HTTP request to build the base URL for email sending.
+db (AsyncSession): The database session used to query the database.</p>
+</dd>
+<dt>Returns:</dt><dd><p>UserValidationSchemaResponse: The newly created user data including the user’s ID, email, username, and role.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the user already exists (409 Conflict).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.auth.user_dashboard">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.auth.</span></span><span class="sig-name descname"><span class="pre">user_dashboard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">User</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.auth.user_dashboard" title="Link to this definition">¶</a></dt>
+<dd><p>Provides access to the user dashboard. Available to all authenticated users.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>current_user (User): The current authenticated user, obtained from the access token.</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: A message welcoming the user to the User Dashboard.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.routes.tag">
+<span id="photoshare-rest-api-routes-tag"></span><h1>PhotoShare-REST-API routes Tag<a class="headerlink" href="#module-src.routes.tag" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.tag.add_tags_to_photo_route">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.tag.</span></span><span class="sig-name descname"><span class="pre">add_tags_to_photo_route</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">photo_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.tag.add_tags_to_photo_route" title="Link to this definition">¶</a></dt>
+<dd><p>Add a list of tags to a specific photo.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>photo_id (int): The ID of the photo to which tags will be added.
+tag_names (List[str]): A list of tag names to add to the photo.
+session (AsyncSession): The database session.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the photo is not found (404).
+HTTPException: If adding the tags exceeds the limit of 5 tags (400).</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: A message confirming the successful addition of the tags to the photo.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.tag.delete_tag">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.tag.</span></span><span class="sig-name descname"><span class="pre">delete_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.tag.delete_tag" title="Link to this definition">¶</a></dt>
+<dd><p>Delete a tag by its name, including its associations with photos.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>tag_name (str): The name of the tag to delete.
+session (AsyncSession): The database session.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the tag is not found (404).</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: A message confirming the successful deletion of the tag and its associations.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.routes.tag.get_tags">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.routes.tag.</span></span><span class="sig-name descname"><span class="pre">get_tags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">photo_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.routes.tag.get_tags" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieve a list of tags associated with a specific photo.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>photo_id (int): The ID of the photo for which to retrieve tags.
+session (AsyncSession): The database session.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List[TagResponse]: A list of tags associated with the specified photo.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.services.auth">
+<span id="photoshare-rest-api-service-auth"></span><h1>PhotoShare-REST-API service Auth<a class="headerlink" href="#module-src.services.auth" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.services.auth.Auth">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.services.auth.</span></span><span class="sig-name descname"><span class="pre">Auth</span></span><a class="headerlink" href="#src.services.auth.Auth" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.services.auth.Auth.ALGORITHM">
+<span class="sig-name descname"><span class="pre">ALGORITHM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'HS256'</span></em><a class="headerlink" href="#src.services.auth.Auth.ALGORITHM" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.services.auth.Auth.SECRET_KEY">
+<span class="sig-name descname"><span class="pre">SECRET_KEY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'1234567890'</span></em><a class="headerlink" href="#src.services.auth.Auth.SECRET_KEY" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.services.auth.Auth.create_access_token">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_access_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expires_delta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.services.auth.Auth.create_access_token" title="Link to this definition">¶</a></dt>
+<dd><p>Create a new access token.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data (dict): The data to encode in the token.
+expires_delta (Optional[float], optional): The expiration time in seconds. Defaults to None.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The encoded access token.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.services.auth.Auth.create_email_token">
+<span class="sig-name descname"><span class="pre">create_email_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.services.auth.Auth.create_email_token" title="Link to this definition">¶</a></dt>
+<dd><p>Create a token for email verification.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data (dict): The data to encode in the token.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The encoded token.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.services.auth.Auth.create_refresh_token">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_refresh_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expires_delta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.services.auth.Auth.create_refresh_token" title="Link to this definition">¶</a></dt>
+<dd><p>Create a new refresh token.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data (dict): The data to encode in the token.
+expires_delta (Optional[float], optional): The expiration time in seconds. Defaults to None.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The encoded refresh token.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.services.auth.Auth.decode_refresh_token">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">decode_refresh_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refresh_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.services.auth.Auth.decode_refresh_token" title="Link to this definition">¶</a></dt>
+<dd><p>Decode a refresh token and extract the email.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>refresh_token (str): The refresh token to decode.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The email extracted from the token.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the token is invalid or expired.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.services.auth.Auth.get_current_user">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_current_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(OAuth2PasswordBearer)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.services.auth.Auth.get_current_user" title="Link to this definition">¶</a></dt>
+<dd><p>Get the current user from a token.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>token (str, optional): The token to decode. Defaults to Depends(oauth2_scheme).
+db (AsyncSession, optional): The database session. Defaults to Depends(get_db).</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: The current user.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the token is invalid or expired.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.services.auth.Auth.get_email_from_token">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_email_from_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.services.auth.Auth.get_email_from_token" title="Link to this definition">¶</a></dt>
+<dd><p>Extract the email from a token.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>token (str): The token to decode.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The email extracted from the token.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the token is invalid or expired.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.services.auth.Auth.get_password_hash">
+<span class="sig-name descname"><span class="pre">get_password_hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.services.auth.Auth.get_password_hash" title="Link to this definition">¶</a></dt>
+<dd><p>Get the hashed version of a password.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>password (str): The password to hash.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The hashed password.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.services.auth.Auth.oauth2_scheme">
+<span class="sig-name descname"><span class="pre">oauth2_scheme</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;fastapi.security.oauth2.OAuth2PasswordBearer</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#src.services.auth.Auth.oauth2_scheme" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.services.auth.Auth.pwd_context">
+<span class="sig-name descname"><span class="pre">pwd_context</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CryptContext&gt;</span></em><a class="headerlink" href="#src.services.auth.Auth.pwd_context" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.services.auth.Auth.verify_password">
+<span class="sig-name descname"><span class="pre">verify_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plain_password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hashed_password</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.services.auth.Auth.verify_password" title="Link to this definition">¶</a></dt>
+<dd><p>Verify a plain password against a hashed password.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>plain_password (str): The plain password to verify.
+hashed_password (str): The hashed password to verify against.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the plain password matches the hashed password, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.services.auth.create_access_token">
+<span class="sig-prename descclassname"><span class="pre">src.services.auth.</span></span><span class="sig-name descname"><span class="pre">create_access_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.services.auth.create_access_token" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a JSON Web Token (JWT) containing user information and expiration time.</p>
+<p>This function generates an access token that is signed using a secret key and includes the following claims:
+- The user-provided data (e.g., user email or other information).
+- The expiration time, which is calculated based on the configured token expiration time.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data (dict): A dictionary containing user-specific information to include in the token payload.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: A signed JWT (access token) as a string.</p>
+</dd>
+<dt>Example:</dt><dd><p>If the input data is {“sub”: “<a class="reference external" href="mailto:user&#37;&#52;&#48;example&#46;com">user<span>&#64;</span>example<span>&#46;</span>com</a>”}, the function will return a JWT that contains the 
+email as a claim along with the expiration time.</p>
+</dd>
+<dt>Raises:</dt><dd><p>jwt.PyJWTError: If there is an error encoding the JWT.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.services.email">
+<span id="photoshare-rest-api-service-email"></span><h1>PhotoShare-REST-API service Email<a class="headerlink" href="#module-src.services.email" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.services.email.send_email">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.services.email.</span></span><span class="sig-name descname"><span class="pre">send_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">EmailStr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.services.email.send_email" title="Link to this definition">¶</a></dt>
+<dd><p>Sends a verification email to the specified email address.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>email (EmailStr): The email address to send the verification email to.
+username (str): The username associated with the email address.
+host (str): The host URL used in the verification link.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.services.cloudinary">
+<span id="photoshare-rest-api-service-cloudinary"></span><h1>PhotoShare-REST-API service Cloudinary<a class="headerlink" href="#module-src.services.cloudinary" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.services.cloudinary.generate_transformed_image_url">
+<span class="sig-prename descclassname"><span class="pre">src.services.cloudinary.</span></span><span class="sig-name descname"><span class="pre">generate_transformed_image_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">public_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transformations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#src.services.cloudinary.generate_transformed_image_url" title="Link to this definition">¶</a></dt>
+<dd><p>Generates a transformed image URL for a given public ID and transformation settings.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>public_id (str): The public ID of the image in Cloudinary.
+transformations (dict): A dictionary of transformation options to apply to the image.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The transformed image URL.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If an error occurs while generating the transformed URL.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.services.cloudinary.upload_image_to_cloudinary">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.services.cloudinary.</span></span><span class="sig-name descname"><span class="pre">upload_image_to_cloudinary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UploadFile</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#src.services.cloudinary.upload_image_to_cloudinary" title="Link to this definition">¶</a></dt>
+<dd><p>Uploads the given image file to Cloudinary and returns the image URL and public ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>file (UploadFile): The image file to upload.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Tuple[str, str]: A tuple containing the image URL and public ID.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the file type is not supported.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.services.cloudinary.upload_qr_to_cloudinary">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.services.cloudinary.</span></span><span class="sig-name descname"><span class="pre">upload_qr_to_cloudinary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">link_url</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.services.cloudinary.upload_qr_to_cloudinary" title="Link to this definition">¶</a></dt>
+<dd><p>Uploads a QR code generated from the given link URL to Cloudinary.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>link_url (str): The URL to encode in the QR code.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The URL of the uploaded QR code image in Cloudinary.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If an error occurs during the QR code generation or upload.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.services.rating_calculation">
+<span id="photoshare-rest-api-service-rating"></span><h1>PhotoShare-REST-API service Rating<a class="headerlink" href="#module-src.services.rating_calculation" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.services.rating_calculation.rating_calculation">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.services.rating_calculation.</span></span><span class="sig-name descname"><span class="pre">rating_calculation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">photo_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Photo</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#src.services.rating_calculation.rating_calculation" title="Link to this definition">¶</a></dt>
+<dd><p>Calculates the rating of a photo and updates the photo in the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>photo_id (int): The ID of the photo.
+db (AsyncSession): The database session.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Photo | None: The updated photo if it exists, otherwise None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.services.role">
+<span id="photoshare-rest-api-service-role"></span><h1>PhotoShare-REST-API service role<a class="headerlink" href="#module-src.services.role" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.services.role.roles_required">
+<span class="sig-prename descclassname"><span class="pre">src.services.role.</span></span><span class="sig-name descname"><span class="pre">roles_required</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">allowed_roles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.services.role.roles_required" title="Link to this definition">¶</a></dt>
+<dd><p>Decorator that checks if the current user has the allowed role</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>allowed_roles (List[str]): List of allowed roles</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the current user does not have the allowed role</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.services.middlewares">
+<span id="photoshare-rest-api-service-middlewares"></span><h1>PhotoShare-REST-API service Middlewares<a class="headerlink" href="#module-src.services.middlewares" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.services.middlewares.ProcessTimeHeaderMiddleware">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.services.middlewares.</span></span><span class="sig-name descname"><span class="pre">ProcessTimeHeaderMiddleware</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.services.middlewares.ProcessTimeHeaderMiddleware" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseHTTPMiddleware</span></code></p>
+<p>Adds a X-Process-Time header to the response with the time taken to process the request.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.services.middlewares.ProcessTimeHeaderMiddleware.dispatch">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dispatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_next</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.services.middlewares.ProcessTimeHeaderMiddleware.dispatch" title="Link to this definition">¶</a></dt>
+<dd><p>Adds the X-Process-Time header to the response.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>fastapi.Request</em>) – The request that is being processed.</p></li>
+<li><p><strong>call_next</strong> (<em>Callable</em><em>[</em><em>[</em><em>fastapi.Request</em><em>]</em><em>, </em><em>Awaitable</em><em>[</em><em>fastapi.Response</em><em>]</em><em>]</em>) – A function that calls the next middleware or the endpoint.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The response with the added X-Process-Time header.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>fastapi.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="#">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">PhotoShare-REST-API documentation</a></li>
+<li><a class="reference internal" href="#module-main">PhotoShare-REST-API main</a><ul>
+<li><a class="reference internal" href="#main.healthchecker"><code class="docutils literal notranslate"><span class="pre">healthchecker()</span></code></a></li>
+<li><a class="reference internal" href="#main.root"><code class="docutils literal notranslate"><span class="pre">root()</span></code></a></li>
+<li><a class="reference internal" href="#main.startup"><code class="docutils literal notranslate"><span class="pre">startup()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.repository.photos">PhotoShare-REST-API repository Photos</a><ul>
+<li><a class="reference internal" href="#src.repository.photos.add_photo"><code class="docutils literal notranslate"><span class="pre">add_photo()</span></code></a></li>
+<li><a class="reference internal" href="#src.repository.photos.delete_like_of_photo"><code class="docutils literal notranslate"><span class="pre">delete_like_of_photo()</span></code></a></li>
+<li><a class="reference internal" href="#src.repository.photos.delete_photo"><code class="docutils literal notranslate"><span class="pre">delete_photo()</span></code></a></li>
+<li><a class="reference internal" href="#src.repository.photos.generate_and_save_qr"><code class="docutils literal notranslate"><span class="pre">generate_and_save_qr()</span></code></a></li>
+<li><a class="reference internal" href="#src.repository.photos.rate_photo"><code class="docutils literal notranslate"><span class="pre">rate_photo()</span></code></a></li>
+<li><a class="reference internal" href="#src.repository.photos.read_all_photos"><code class="docutils literal notranslate"><span class="pre">read_all_photos()</span></code></a></li>
+<li><a class="reference internal" href="#src.repository.photos.read_photo"><code class="docutils literal notranslate"><span class="pre">read_photo()</span></code></a></li>
+<li><a class="reference internal" href="#src.repository.photos.save_transform_photo"><code class="docutils literal notranslate"><span class="pre">save_transform_photo()</span></code></a></li>
+<li><a class="reference internal" href="#src.repository.photos.search_photos"><code class="docutils literal notranslate"><span class="pre">search_photos()</span></code></a></li>
+<li><a class="reference internal" href="#src.repository.photos.search_photos_by_user"><code class="docutils literal notranslate"><span class="pre">search_photos_by_user()</span></code></a></li>
+<li><a class="reference internal" href="#src.repository.photos.update_photo"><code class="docutils literal notranslate"><span class="pre">update_photo()</span></code></a></li>
+<li><a class="reference internal" href="#src.repository.photos.view_rating_photo"><code class="docutils literal notranslate"><span class="pre">view_rating_photo()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.repository.comments">PhotoShare-REST-API repository Comments</a><ul>
+<li><a class="reference internal" href="#src.repository.comments.create_comment"><code class="docutils literal notranslate"><span class="pre">create_comment()</span></code></a></li>
+<li><a class="reference internal" href="#src.repository.comments.delete_comment"><code class="docutils literal notranslate"><span class="pre">delete_comment()</span></code></a></li>
+<li><a class="reference internal" href="#src.repository.comments.get_comments_by_photo"><code class="docutils literal notranslate"><span class="pre">get_comments_by_photo()</span></code></a></li>
+<li><a class="reference internal" href="#src.repository.comments.update_comment"><code class="docutils literal notranslate"><span class="pre">update_comment()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.repository.users">PhotoShare-REST-API repository Users</a><ul>
+<li><a class="reference internal" href="#src.repository.users.confirmed_email"><code class="docutils literal notranslate"><span class="pre">confirmed_email()</span></code></a></li>
+<li><a class="reference internal" href="#src.repository.users.count_users"><code class="docutils literal notranslate"><span class="pre">count_users()</span></code></a></li>
+<li><a class="reference internal" href="#src.repository.users.create_user"><code class="docutils literal notranslate"><span class="pre">create_user()</span></code></a></li>
+<li><a class="reference internal" href="#src.repository.users.get_user_by_email"><code class="docutils literal notranslate"><span class="pre">get_user_by_email()</span></code></a></li>
+<li><a class="reference internal" href="#src.repository.users.update_avatar_url"><code class="docutils literal notranslate"><span class="pre">update_avatar_url()</span></code></a></li>
+<li><a class="reference internal" href="#src.repository.users.update_token"><code class="docutils literal notranslate"><span class="pre">update_token()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.routes.photos">PhotoShare-REST-API routes Photos</a><ul>
+<li><a class="reference internal" href="#src.routes.photos.create_photo"><code class="docutils literal notranslate"><span class="pre">create_photo()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.photos.create_qr_code"><code class="docutils literal notranslate"><span class="pre">create_qr_code()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.photos.delete_like_of_photo"><code class="docutils literal notranslate"><span class="pre">delete_like_of_photo()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.photos.delete_photo"><code class="docutils literal notranslate"><span class="pre">delete_photo()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.photos.rate_photo"><code class="docutils literal notranslate"><span class="pre">rate_photo()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.photos.read_photo"><code class="docutils literal notranslate"><span class="pre">read_photo()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.photos.read_photos"><code class="docutils literal notranslate"><span class="pre">read_photos()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.photos.search_photos"><code class="docutils literal notranslate"><span class="pre">search_photos()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.photos.search_photos_by_user"><code class="docutils literal notranslate"><span class="pre">search_photos_by_user()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.photos.transform_photo"><code class="docutils literal notranslate"><span class="pre">transform_photo()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.photos.update_photo"><code class="docutils literal notranslate"><span class="pre">update_photo()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.photos.view_rating_photo"><code class="docutils literal notranslate"><span class="pre">view_rating_photo()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.routes.comments">PhotoShare-REST-API routes Comments</a><ul>
+<li><a class="reference internal" href="#src.routes.comments.add_comment"><code class="docutils literal notranslate"><span class="pre">add_comment()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.comments.edit_comment"><code class="docutils literal notranslate"><span class="pre">edit_comment()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.comments.get_photo_comments"><code class="docutils literal notranslate"><span class="pre">get_photo_comments()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.comments.remove_comment"><code class="docutils literal notranslate"><span class="pre">remove_comment()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.routes.users">PhotoShare-REST-API routes Users</a><ul>
+<li><a class="reference internal" href="#src.routes.users.get_current_user"><code class="docutils literal notranslate"><span class="pre">get_current_user()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.routes.auth">PhotoShare-REST-API routes Auth</a><ul>
+<li><a class="reference internal" href="#src.routes.auth.add_token_to_blacklist"><code class="docutils literal notranslate"><span class="pre">add_token_to_blacklist()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.auth.admin_dashboard"><code class="docutils literal notranslate"><span class="pre">admin_dashboard()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.auth.confirmed_email"><code class="docutils literal notranslate"><span class="pre">confirmed_email()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.auth.get_current_user"><code class="docutils literal notranslate"><span class="pre">get_current_user()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.auth.is_token_blacklisted"><code class="docutils literal notranslate"><span class="pre">is_token_blacklisted()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.auth.login"><code class="docutils literal notranslate"><span class="pre">login()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.auth.logout"><code class="docutils literal notranslate"><span class="pre">logout()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.auth.moderator_dashboard"><code class="docutils literal notranslate"><span class="pre">moderator_dashboard()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.auth.refresh_token"><code class="docutils literal notranslate"><span class="pre">refresh_token()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.auth.role_required"><code class="docutils literal notranslate"><span class="pre">role_required()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.auth.signup"><code class="docutils literal notranslate"><span class="pre">signup()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.auth.user_dashboard"><code class="docutils literal notranslate"><span class="pre">user_dashboard()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.routes.tag">PhotoShare-REST-API routes Tag</a><ul>
+<li><a class="reference internal" href="#src.routes.tag.add_tags_to_photo_route"><code class="docutils literal notranslate"><span class="pre">add_tags_to_photo_route()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.tag.delete_tag"><code class="docutils literal notranslate"><span class="pre">delete_tag()</span></code></a></li>
+<li><a class="reference internal" href="#src.routes.tag.get_tags"><code class="docutils literal notranslate"><span class="pre">get_tags()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.services.auth">PhotoShare-REST-API service Auth</a><ul>
+<li><a class="reference internal" href="#src.services.auth.Auth"><code class="docutils literal notranslate"><span class="pre">Auth</span></code></a><ul>
+<li><a class="reference internal" href="#src.services.auth.Auth.ALGORITHM"><code class="docutils literal notranslate"><span class="pre">Auth.ALGORITHM</span></code></a></li>
+<li><a class="reference internal" href="#src.services.auth.Auth.SECRET_KEY"><code class="docutils literal notranslate"><span class="pre">Auth.SECRET_KEY</span></code></a></li>
+<li><a class="reference internal" href="#src.services.auth.Auth.create_access_token"><code class="docutils literal notranslate"><span class="pre">Auth.create_access_token()</span></code></a></li>
+<li><a class="reference internal" href="#src.services.auth.Auth.create_email_token"><code class="docutils literal notranslate"><span class="pre">Auth.create_email_token()</span></code></a></li>
+<li><a class="reference internal" href="#src.services.auth.Auth.create_refresh_token"><code class="docutils literal notranslate"><span class="pre">Auth.create_refresh_token()</span></code></a></li>
+<li><a class="reference internal" href="#src.services.auth.Auth.decode_refresh_token"><code class="docutils literal notranslate"><span class="pre">Auth.decode_refresh_token()</span></code></a></li>
+<li><a class="reference internal" href="#src.services.auth.Auth.get_current_user"><code class="docutils literal notranslate"><span class="pre">Auth.get_current_user()</span></code></a></li>
+<li><a class="reference internal" href="#src.services.auth.Auth.get_email_from_token"><code class="docutils literal notranslate"><span class="pre">Auth.get_email_from_token()</span></code></a></li>
+<li><a class="reference internal" href="#src.services.auth.Auth.get_password_hash"><code class="docutils literal notranslate"><span class="pre">Auth.get_password_hash()</span></code></a></li>
+<li><a class="reference internal" href="#src.services.auth.Auth.oauth2_scheme"><code class="docutils literal notranslate"><span class="pre">Auth.oauth2_scheme</span></code></a></li>
+<li><a class="reference internal" href="#src.services.auth.Auth.pwd_context"><code class="docutils literal notranslate"><span class="pre">Auth.pwd_context</span></code></a></li>
+<li><a class="reference internal" href="#src.services.auth.Auth.verify_password"><code class="docutils literal notranslate"><span class="pre">Auth.verify_password()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#src.services.auth.create_access_token"><code class="docutils literal notranslate"><span class="pre">create_access_token()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.services.email">PhotoShare-REST-API service Email</a><ul>
+<li><a class="reference internal" href="#src.services.email.send_email"><code class="docutils literal notranslate"><span class="pre">send_email()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.services.cloudinary">PhotoShare-REST-API service Cloudinary</a><ul>
+<li><a class="reference internal" href="#src.services.cloudinary.generate_transformed_image_url"><code class="docutils literal notranslate"><span class="pre">generate_transformed_image_url()</span></code></a></li>
+<li><a class="reference internal" href="#src.services.cloudinary.upload_image_to_cloudinary"><code class="docutils literal notranslate"><span class="pre">upload_image_to_cloudinary()</span></code></a></li>
+<li><a class="reference internal" href="#src.services.cloudinary.upload_qr_to_cloudinary"><code class="docutils literal notranslate"><span class="pre">upload_qr_to_cloudinary()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.services.rating_calculation">PhotoShare-REST-API service Rating</a><ul>
+<li><a class="reference internal" href="#src.services.rating_calculation.rating_calculation"><code class="docutils literal notranslate"><span class="pre">rating_calculation()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.services.role">PhotoShare-REST-API service role</a><ul>
+<li><a class="reference internal" href="#src.services.role.roles_required"><code class="docutils literal notranslate"><span class="pre">roles_required()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.services.middlewares">PhotoShare-REST-API service Middlewares</a><ul>
+<li><a class="reference internal" href="#src.services.middlewares.ProcessTimeHeaderMiddleware"><code class="docutils literal notranslate"><span class="pre">ProcessTimeHeaderMiddleware</span></code></a><ul>
+<li><a class="reference internal" href="#src.services.middlewares.ProcessTimeHeaderMiddleware.dispatch"><code class="docutils literal notranslate"><span class="pre">ProcessTimeHeaderMiddleware.dispatch()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">PhotoShare-REST-API  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">PhotoShare-REST-API documentation</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Andreshizap.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>
