@@ -12,8 +12,7 @@ const returnMessage = document.getElementById("return_message")
 
 if (message) {
     returnMessage.innerHTML = ""
-    const returnMessageH = document.createElement('h7')
-    returnMessageH.className = "my_display-4 text-body text-center"
+    const returnMessageH = document.createElement('p')
     returnMessageH.textContent = message;
     returnMessageH.classList.add("text-center");
     returnMessage.appendChild(returnMessageH)
@@ -42,15 +41,17 @@ form.addEventListener("submit", async (e) => {
 
     const response = await fetch(
         `${baseUrl}/api/auth/signup`,
-        requestOptions)
+        requestOptions);
+    const result = await response.json()
     if (response.status == 201) {
-        const result = await response.json()
-        const message = encodeURIComponent(`Congratulations, ${result.user.first_name} ${result.user.last_name}!\nYour registration was successful.\nPlease verify your email address.`)
-        window.location = `/templates/images.html`
+        const message = 'Please, check your email to activate your account'
+        window.location = `/templates/login.html/?message=${message}`
     }
     if (response.status == 409) {
         const message = encodeURIComponent(`An account with the same email address or username already exists`)
-        window.location = `/static/client_rest/signup.html?message=${message}`
+        window.location = `/templates/signup.html?message=${message}`
+    } else {
+        returnMessage.textContent = result.detail[0].msg || result.message;
     }
 
 })
