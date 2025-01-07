@@ -1,24 +1,30 @@
-# Contacts Management API - README
+# PhotoShare API - README
 
 ## Project Overview
-This mini-project is a REST API built using FastAPI, designed for managing contacts and their information. The project uses SQLAlchemy as the ORM (Object Relational Mapper) to handle the database interactions, and PostgreSQL as the database. The API allows users to perform CRUD operations (Create, Read, Update, Delete) and includes additional features for searching and filtering contacts based on different attributes.
+This mini-project is a REST API built using FastAPI, designed for managing photos, comments, and ratings. The project uses SQLAlchemy as the ORM (Object Relational Mapper) to handle database interactions, and PostgreSQL as the database. The API allows users to upload photos, add comments, and rate photos. Additional features include advanced image transformations, searching for photos by tags and descriptions, and user avatar management.
 
-Additionally, the project now includes user authentication and authorization, ensuring that only registered users can perform operations on their own contacts using JWT tokens. Alembic is used for database migrations, and Docker Compose simplifies the setup of dependencies. Other enhancements include rate limiting, email verification, and avatar management.
-
+	Additionally, the project includes user authentication and authorization, ensuring that only registered users can upload and manage their own photos and comments using JWT tokens. Alembic is used for database migrations, and Docker Compose simplifies the setup of dependencies. Other enhancements include rate limiting, email verification, avatar management through Cloudinary, and photo transformation features such as resizing, cropping, and rotating.
 ## Key Features
-- Store contacts with details such as:
-  - First Name
-  - Last Name
-  - Email Address
-  - Phone Number
-  - Date of Birth
-  - Additional Information (optional)
-- Full CRUD operations for contacts.
-- Search for contacts by:
-  - First Name
-  - Last Name
-  - Email Address
-- Retrieve contacts whose birthdays are in the upcoming 7 days.
+### Photo Management
+- Upload photos with descriptions and tags.
+- Advanced photo transformations (resizing, cropping, rotating, and applying effects).
+- Search photos by:
+  - Keywords in descriptions.
+  - Tags.
+  - Ratings.
+  - Creation date range.
+- Manage photo metadata (update descriptions, delete photos).
+
+### Comment Management
+- Add comments under photos.
+- Edit or update comments by their authors.
+- Moderators and administrators can delete inappropriate comments.
+
+### Photo Rating
+- Users can rate photos on a scale of 0–5.
+- Ratings are averaged to calculate the overall photo score.
+- Only authenticated users can rate photos, and self-rating is restricted.
+
 - **Authentication and Authorization:**
   - User authentication is implemented using hashed passwords and JWT tokens (access and refresh tokens).
   - Users are assigned one of the following roles:
@@ -331,29 +337,53 @@ After starting the server, navigate to `http://127.0.0.1:8000/docs` to explore t
   2. The API retrieves all photos uploaded by the specified user.
   3. The API returns a list of photos, each including details such as `photo_id`, `photo_url`, `description`, `tags`, and `rating`.
 
-- **Transforms a photo**
-- `GET /api/photos/{photo_id}/transform`
-- **Endpoint**: `GET /api/photos/{photo_id}/transform`
-- **Description**: Transforms a photo by applying various modifications such as resizing, cropping, rotating, and adding effects.
-- **Parameters**:
-  - **photo_id**: The ID of the photo to transform (required).
-  - **width**: The width of the transformed image (optional).
-  - **height**: The height of the transformed image (optional).
-  - **crop**: Crop mode for the image. Possible values:
-    - `fill` (default): Fills the dimensions.
-    - `scale`: Scales the image.
-    - `fit`: Fits the image within the dimensions.
-  - **angle**: The angle in degrees to rotate the image (optional).
-  - **effect**: The name of the effect to apply (e.g., grayscale for black-and-white, sepia) (optional).
-  - **quality**: The quality of the transformed image, ranging from 0 to 100 (optional).
-  - **format**: The format for the transformed image (e.g., jpeg, png, webp) (optional).
+# Transforms a Photo
 
-**Workflow**:
-1. The user sends a `GET` request to the `/photos/{photo_id}/transform` endpoint, specifying the desired transformations as query parameters.
-2. The API applies the specified transformations (e.g., resizing, cropping, rotating, or adding effects) to the photo stored in the cloud.
-3. The transformed image is returned as a URL or a downloadable file, based on the user's request.
+## Endpoint
+`GET /api/photos/{photo_id}/transform`
 
-This endpoint allows users to customize their images for optimized use cases, providing flexibility and enhanced functionality.
+## Description
+Transforms a photo by applying various modifications such as resizing, cropping, rotating, and adding effects. This feature is highly customizable, allowing users to adjust the appearance of their images for specific use cases.
+
+---
+
+## Parameters
+- **photo_id** (required): The ID of the photo to transform.
+- **width** (optional): Specifies the desired width (in pixels) of the transformed image.
+- **height** (optional): Specifies the desired height (in pixels) of the transformed image.
+- **crop** (optional): Crop mode for the image. Possible values:
+  - `fill` (default): Fills the dimensions, possibly cropping the image.
+  - `scale`: Scales the image proportionally.
+  - `fit`: Fits the image within the specified dimensions while maintaining its aspect ratio.
+- **angle** (optional): Rotates the image by the specified number of degrees (e.g., `90`, `180`, `270`).
+- **effect** (optional): Applies a specific visual effect to the image. Supported effects include:
+  - `grayscale`: Converts the image to black-and-white.
+  - `sepia`: Adds a vintage warm-tone effect.
+  - `blur`: Blurs the image to soften details.
+  - `sharpen`: Enhances the sharpness of the image.
+  - `invert`: Inverts the colors of the image.
+- **quality** (optional): Sets the quality of the output image. Acceptable values range from `1` (lowest quality) to `100` (highest quality). Default is `80`.
+- **format** (optional): Specifies the output format of the transformed image. Supported formats include:
+  - `jpeg`
+  - `png`
+  - `webp`
+- **background** (optional): Sets a background color for images with transparency (e.g., `white`, `black`, or a HEX color like `#FFFFFF`).
+- **aspect_ratio** (optional): Adjusts the aspect ratio of the image (e.g., `1:1` for square images, `16:9` for widescreen).
+- **brightness** (optional): Adjusts the brightness of the image. Positive values increase brightness, while negative values decrease it.
+- **contrast** (optional): Adjusts the contrast of the image. Positive values increase contrast, while negative values decrease it.
+
+---
+
+## Workflow
+1. **Request**: A user sends a `GET` request to the `/photos/{photo_id}/transform` endpoint with the desired transformation parameters as query parameters.
+2. **Processing**: The API retrieves the photo, applies the requested transformations, and saves the transformed image to the cloud.
+3. **Response**: The API returns a URL for the transformed image, which the user can view or download.
+
+---
+
+## Example Request
+```http
+GET /api/photos/123/transform?width=400&height=400&crop=fill&effect=sepia&angle=90&quality=80&format=jpeg
 
 - **Photo rating**
 - `PUT /api/photos/{photo_id}/rating`
@@ -866,13 +896,21 @@ TOTAL                                      350     30    91%
 
 By following these steps, you can effectively view, analyze, and debug your test results for the project.
 
+## Deployment
+
+This application is deployed on the **Koyeb** platform. You can access the live version of the API, including its Swagger documentation, via the following link:
+
+[PhotoShare API Deployment](https://photoshare-rest-api.koyeb.app/docs#/)
+
+Koyeb is a developer-friendly serverless platform to deploy apps globally. It simplifies deployment with no need for managing servers or infrastructure.
+
 ## General Requirements
 - The project is built with FastAPI.
 - Uses SQLAlchemy ORM to interact with the PostgreSQL database.
 - Includes full CRUD functionality for managing contacts.
 - Authentication and authorization using JWT tokens.
 - Supports data validation through Pydantic.
-- Exposes API documentation through FastAPI’s built-in Swagger interface.
+- Exposes API documentation through FastAPI built-in Swagger interface.
 - Rate limiting is applied to restrict request frequency.
 - CORS is enabled to control cross-origin requests.
 - Docker Compose is used for managing services, including the database and API.
