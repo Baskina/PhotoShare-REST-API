@@ -3,7 +3,11 @@
 ## Project Overview
 This mini-project is a REST API built using FastAPI, designed for managing photos, comments, and ratings. The project uses SQLAlchemy as the ORM (Object Relational Mapper) to handle database interactions, and PostgreSQL as the database. The API allows users to upload photos, add comments, and rate photos. Additional features include advanced image transformations, searching for photos by tags and descriptions, and user avatar management.
 
-	Additionally, the project includes user authentication and authorization, ensuring that only registered users can upload and manage their own photos and comments using JWT tokens. Alembic is used for database migrations, and Docker Compose simplifies the setup of dependencies. Other enhancements include rate limiting, email verification, avatar management through Cloudinary, and photo transformation features such as resizing, cropping, and rotating.
+Additionally, the project includes user authentication and authorization, ensuring that only registered users can upload and manage their own photos and comments using JWT tokens. Alembic is used for database migrations, and Docker Compose simplifies the setup of dependencies. Other enhancements include rate limiting, email verification, avatar management through Cloudinary, and photo transformation features such as resizing, cropping, and rotating.
+
+Explore the deployed application here: https://photoshare-rest-api.koyeb.app/
+
+
 ## Key Features
 ### Photo Management
 - Upload photos with descriptions and tags.
