@@ -534,6 +534,8 @@ async def create_qr_code(
     if not photo_transfer:
         raise HTTPException(status_code=404, detail="Photo record not found")
 
-    link_qr = await upload_qr_to_cloudinary(photo_transfer.link_url)
-    result = await repositories_photos.generate_and_save_qr(photo_transfer, link_qr, db)
-    return result
+    if not photo_transfer.link_qr:
+        link_qr = await upload_qr_to_cloudinary(photo_transfer.link_url)
+        photo_transfer = await repositories_photos.generate_and_save_qr(photo_transfer, link_qr, db)
+
+    return photo_transfer
