@@ -44,7 +44,7 @@ def test_not_confirmed_login(client):
 
     assert response.status_code == 401, response.text
     data = response.json()
-    assert data["detail"] == "Email not confirmed"
+    assert data["detail"] == "Invalid email"
 
 
 @pytest.mark.asyncio
@@ -63,7 +63,7 @@ async def test_login(client):
 
     assert response.status_code == 200, response.text
     data = response.json()
-    assert data["token_type"] in data
+    assert data["token_type"] == "bearer"
     assert "access_token" in data
     assert "refresh_token" in data
 
