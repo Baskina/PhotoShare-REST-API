@@ -128,7 +128,7 @@ const getImages = async () => {
     };
 
 
-    const response = await fetch(`${baseUrl}/api/photos/?limit=50`, requestOptions)
+    const response = await fetch(`${baseUrl}/api/photos/all/?limit=50`, requestOptions)
     if (response.status === 200) {
         const result = await response.json()
         images.innerHTML = ""

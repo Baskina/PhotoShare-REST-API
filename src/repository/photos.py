@@ -116,6 +116,36 @@ async def read_all_photos(
     return contacts.scalars().all()
 
 
+async def read_all_photos_all_users(
+        limit: int,
+        offset: int,
+        db: AsyncSession
+) -> list[Photo]:
+    """
+    Retrieve all photos for all users.
+
+    **Parameters**
+
+    * `limit`: The maximum number of photos to return
+    * `offset`: The offset from which to start returning photos
+    * `db`: An asynchronous database session
+
+    **Returns**
+
+    * A list of `Photo` objects, each representing a photo.
+
+    **Description**
+
+    This function executes a SQL query to retrieve a list of all photos for all users, with pagination. The query uses the provided `limit` and `offset` parameters to control the number of results returned.
+
+    **Note**
+
+    This function does not perform any authentication or authorization checks. It is intended to be used internally by the application.
+    """
+    stmt = select(Photo).offset(offset).limit(limit)
+    contacts = await db.execute(stmt)
+    return contacts.scalars().all()
+
 async def search_photos(
         limit: int,
         offset: int,
