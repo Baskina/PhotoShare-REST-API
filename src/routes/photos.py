@@ -97,6 +97,51 @@ async def create_photo(
         "image": image_url,
     }
 
+@routerPhotos.get(
+    "/all",
+    response_model=list[PhotosSchemaResponse],
+#    dependencies=[Depends(RateLimiter(times=1, seconds=20))],
+    summary="Retrieve all photos",
+    description="Gets a list of All photos",
+)
+async def read_photos_all_users(
+        limit: int = Query(default=10, ge=0, le=50, description="The maximum number of photos to return"),
+        offset: int = Query(default=0, ge=0, description="The offset from which to start returning photos"),
+        db: AsyncSession = Depends(get_db),
+        current_user: User = Depends(auth_service.get_current_user)
+) -> list[PhotosSchemaResponse]:
+    """
+    Retrieve all photos.
+
+    Returns a list of photos for all users, with optional pagination.
+
+    **Query Parameters**
+
+    * `limit`: The maximum number of photos to return (default: 10, range: 0-50)
+    * `offset`: The offset from which to start returning photos (default: 0)
+
+    **Response**
+
+    * A list of `PhotosSchemaResponse` objects, each representing a photo.
+
+    **Description**
+
+    This endpoint retrieves a list of all photos for all users. The response can be paginated using the `limit` and `offset` query parameters. If a photo does not have a description, a default description of "No description provided" is used.
+
+    **Authentication**
+
+    This endpoint requires authentication. The `current_user` is retrieved using the `auth_service.get_current_user` dependency.
+
+    **Database**
+
+    This endpoint uses the `get_db` dependency to retrieve an asynchronous database session.
+    """
+    photos = await repositories_photos.read_all_photos_all_users(limit=limit, offset=offset, db=db)
+    for photo in photos:
+        if not photo.description:
+            photo.description = "No description provided"
+    return photos
+
 
 @routerPhotos.get(
     "/search",
@@ -316,7 +361,7 @@ async def read_photo(
     summary="Retrieve all photos for the current user",
     description="Gets a list of photos for the current user from the database",
 )
-async def read_photos(
+async def read_photos_of_current_user(
         limit: int = Query(default=10, ge=0, le=50, description="The maximum number of photos to return"),
         offset: int = Query(default=0, ge=0, description="The offset from which to start returning photos"),
         db: AsyncSession = Depends(get_db),
