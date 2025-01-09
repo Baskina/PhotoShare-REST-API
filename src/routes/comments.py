@@ -14,7 +14,8 @@ router = APIRouter(prefix="/comments", tags=["Comments"])
 async def add_comment(
     comment: CommentCreate,
     user_id: int,
-    session: AsyncSession = Depends(get_db)
+    session: AsyncSession = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user)
 ):
     """
     Creates a new comment for a given photo.
@@ -33,7 +34,8 @@ async def add_comment(
 @router.get("/{photo_id}", response_model=List[CommentResponse], summary="Get all comments for a photo", description="Retrieve all comments associated with a photo by its ID.")
 async def get_photo_comments(
     photo_id: int,
-    session: AsyncSession = Depends(get_db)
+    session: AsyncSession = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user)
 ):
     """
     Retrieve all comments associated with a photo by its ID.
@@ -52,7 +54,8 @@ async def edit_comment(
     comment_id: int,
     comment: CommentUpdate,
     user_id: int,
-    session: AsyncSession = Depends(get_db)
+    session: AsyncSession = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user)
 ):
     """
     Updates a comment by its ID.

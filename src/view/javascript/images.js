@@ -79,7 +79,7 @@ const getUserByUserName = async (username) => {
 //   const searchValue = form.search_info.value
 //   if (searchValue) {
 //     const encodedSearchValue = encodeURIComponent(searchValue);
-//     window.location = ``;
+//     window.location = `\`;
 //   }
 // })
 
@@ -128,7 +128,7 @@ const getImages = async () => {
     };
 
 
-    const response = await fetch(`${baseUrl}/api/photos/search`, requestOptions)
+    const response = await fetch(`${baseUrl}/api/photos/?limit=50`, requestOptions)
     if (response.status === 200) {
         const result = await response.json()
         images.innerHTML = ""
