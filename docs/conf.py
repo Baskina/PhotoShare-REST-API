@@ -11,7 +11,7 @@ import os
 sys.path.append(os.path.abspath('..'))
 
 project = 'PhotoShare-REST-API'
-copyright = '2025, Andreshizap'
+copyright = '2025, Digital workspace'
 author = 'Command "Digital workspace"'
 
 # -- General configuration ---------------------------------------------------
