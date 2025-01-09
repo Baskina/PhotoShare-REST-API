@@ -101,7 +101,7 @@ const getUserImages = async (user) => {
         redirect: 'follow'
     };
 
-    const response = await fetch(`${baseUrl}/api/photos/search/${user_id}`, requestOptions);
+    const response = await fetch(`${baseUrl}/api/photos/search/${user_id}/?limit=50`, requestOptions);
     if (response.status === 200) {
         const result = await response.json();
         userImages.innerHTML = ""
