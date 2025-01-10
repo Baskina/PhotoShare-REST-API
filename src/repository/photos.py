@@ -174,17 +174,19 @@ async def search_photos(
     Returns:
         list[Photo]: A list of photos that match the search criteria.
     """
-    stmt = (
-        select(Photo)
-        .join(photo_tag_association, Photo.id == photo_tag_association.c.photo_id)
-        .join(Tag, Tag.id == photo_tag_association.c.tag_id)
-        .offset(offset)
-        .limit(limit)
-    )
+    if tag_id:
+        stmt = (
+            select(Photo)
+            .join(photo_tag_association, Photo.id == photo_tag_association.c.photo_id)
+            .join(Tag, Tag.id == photo_tag_association.c.tag_id)
+            .offset(offset)
+            .limit(limit)
+        )
+        stmt = stmt.filter(photo_tag_association.c.tag_id == tag_id)
+    else:
+        stmt = select(Photo).offset(offset).limit(limit)
     if keyword:
         stmt = stmt.filter(Photo.description.ilike(f"%{keyword}%"))
-    if tag_id:
-        stmt = stmt.filter(photo_tag_association.c.tag_id == tag_id)
     if min_rating:
         stmt = stmt.filter(or_(Photo.rating >= min_rating, Photo.rating.is_(None)))
     if max_rating:
